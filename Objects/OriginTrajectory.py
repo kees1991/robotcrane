@@ -1,5 +1,3 @@
-from matplotlib import pyplot as plt
-
 from Tooling.trajectory import calculate_minimum_move_time, get_coefficients_nonzero_v_and_a, calculate_position
 
 
