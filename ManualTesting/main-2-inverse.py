@@ -1,0 +1,48 @@
+import numpy as np
+from matplotlib import pyplot as plt
+
+from Objects.Pose import Pose
+from Objects.RobotCrane import RobotCrane
+
+import matplotlib.animation as animation
+import matplotlib
+matplotlib.use('TkAgg')
+
+from Objects.Trajectory import Trajectory
+from Tooling import plot_tools
+from Tooling.Plotting import setup_animation_axes_3d, animate_3d
+from Tooling.plot_tools import plot_robot
+
+if __name__ == '__main__':
+    robot = RobotCrane()
+
+    # Desired end-effector position and Z-axis orientation
+    x = 0.4
+    y = 0.4
+    z = 0.5
+    phi = np.deg2rad(0)
+
+    # Use Inverse kinematics to calculate the actuator states
+    act_states = robot.inverse_kinematics(x, y, z, phi, True)
+    robot.set_act_states_t_1(act_states)
+
+    print(Pose(robot).to_json())
+
+    plot_robot(robot)
+    plt.show()
+
+    # Create the trajectory
+    traj = Trajectory(robot, 1/30)
+    act_state_time_series = traj.calculate_trajectory()
+    print("Robot will move in {} s".format(round(traj.min_move_time, 2)))
+    traj.t = 0
+    plot_tools.plot_trajectory(traj.get_act_state_time_series())
+    plt.show()
+
+    fig, ax, joint_lines, trajectory_line = setup_animation_axes_3d()
+    ani = animation.FuncAnimation(fig, animate_3d, len(act_state_time_series),
+                                  fargs=(
+                                      act_state_time_series, robot, joint_lines, trajectory_line),
+                                  interval=25, blit=True)
+
+    ani.save('robot-crane-inverse.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
