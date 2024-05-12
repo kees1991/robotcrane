@@ -126,7 +126,7 @@ var Communicator = /** @class */ (function () {
         get: function () {
             var _this = this;
             return new Promise(function (resolve, reject) {
-                var wsClient = new WebSocket("ws://localhost:8000/robotcrane");
+                var wsClient = new WebSocket("ws://ec2-52-45-198-60.compute-1.amazonaws.com:8000/robotcrane");
                 wsClient.onopen = function () {
                     console.log("Connected to websocket");
                     resolve(wsClient);
