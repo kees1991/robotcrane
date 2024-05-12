@@ -121,7 +121,7 @@ class RobotCrane(object):
         x, y, z = translated_goal[0], translated_goal[1], translated_goal[2]
 
         if self.origin_t_1 is not None:
-            phi += self.origin_t_1[3]
+            phi -= self.origin_t_1[3]
 
         # For IK we assume that gripper will be open or closed
         if do_open_gripper:
