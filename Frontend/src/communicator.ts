@@ -66,30 +66,28 @@ export class Communicator {
         })
     }
 
-    initRobot = () => {
-        // checkSocketConnection(this.socket)
-        let message: Message = { action: "initrobot"};
-        let messageString = "{\"action\": \"" + message.action + "\"}";
+    private createMessage(action: string) {
+        let message: Message = {action: action};
+        return "{\"action\": \"" + message.action + "\"}";
+    }
 
+    private sendMessage(messageString: string) {
         this.promise
-            .then( wsClient =>  {
+            .then(wsClient => {
                 wsClient.send(messageString);
                 console.log('Sending message' + messageString)
             })
-            .catch( error => alert("Connection error: " + error) )
+            .catch(error => alert("Connection error: " + error))
+    }
+
+    initRobot = () => {
+        let messageString = this.createMessage("initrobot");
+        this.sendMessage(messageString);
     }
 
     resetRobot = () => {
-        // checkSocketConnection(this.socket)
-        let message: Message = { action: "resetrobot"};
-        let messageString = "{\"action\": \"" + message.action + "\"}";
-
-        this.promise
-            .then( wsClient =>  {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch( error => alert("Connection error: " + error) )
+        let messageString = this.createMessage("resetrobot");
+        this.sendMessage(messageString);
     }
 
     setActuatorStates = (d_1:number, theta_1:number, theta_2:number, theta_3:number, l_6:number) => {
@@ -99,12 +97,7 @@ export class Communicator {
 
         let messageString = "{\"action\": \"" + message.action + "\", \"act_states\":" + actStatesJson + "}";
 
-        this.promise
-            .then( wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch( error => alert("Connection error: " + error) )
+        this.sendMessage(messageString);
     }
 
     setEndEffectorPosition = (x : number, y: number, z: number, phi: number, doOpenGripper: boolean) => {
@@ -114,12 +107,7 @@ export class Communicator {
 
         let messageString = "{\"action\": \"" + message.action + "\", \"endeffector_position\":" + positionJson + "}";
 
-        this.promise
-            .then( wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch( error => alert("Connection error: " + error) )
+        this.sendMessage(messageString);
     }
 
     moveOrigin = (x : number, y: number, z: number, phi: number) => {
@@ -129,61 +117,27 @@ export class Communicator {
 
         let messageString = "{\"action\": \"" + message.action + "\", \"org_position\":" + positionJson + "}";
 
-        this.promise
-            .then( wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch( error => alert("Connection error: " + error) )
+        this.sendMessage(messageString);
     }
 
     nextPose = () => {
-        // checkSocketConnection(this.socket)
-        let message: Message = { action: "getpose"};
-        let messageString = "{\"action\": \"" + message.action + "\"}";
-
-        this.promise
-            .then(wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch(error => alert("Connection error: " + error))
+        let messageString = this.createMessage("getpose");
+        this.sendMessage(messageString);
     }
 
     streamPoses = () => {
-        let message: Message = { action: "streamposes"};
-        let messageString = "{\"action\": \"" + message.action + "\"}";
-
-        this.promise
-            .then(wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch(error => alert("Connection error: " + error))
+        let messageString = this.createMessage("streamposes");
+        this.sendMessage(messageString);
     }
 
     streamPosesNewOrg = () => {
-        let message: Message = { action: "streamposesneworg"};
-        let messageString = "{\"action\": \"" + message.action + "\"}";
-
-        this.promise
-            .then(wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch(error => alert("Connection error: " + error))
+        let messageString = this.createMessage("streamposesneworg");
+        this.sendMessage(messageString);
     }
 
     streamPosesControlNewOrg = () => {
-        let message: Message = { action: "streamposescontrolneworg"};
-        let messageString = "{\"action\": \"" + message.action + "\"}";
-
-        this.promise
-            .then(wsClient => {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString)
-            })
-            .catch(error => alert("Connection error: " + error))
+        let messageString = this.createMessage("streamposescontrolneworg");
+        this.sendMessage(messageString);
     }
 }
 

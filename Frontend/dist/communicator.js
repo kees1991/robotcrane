@@ -5,103 +5,49 @@ var Communicator = /** @class */ (function () {
     function Communicator() {
         var _this = this;
         this.initRobot = function () {
-            // checkSocketConnection(this.socket)
-            var message = { action: "initrobot" };
-            var messageString = "{\"action\": \"" + message.action + "\"}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            var messageString = _this.createMessage("initrobot");
+            _this.sendMessage(messageString);
         };
         this.resetRobot = function () {
-            // checkSocketConnection(this.socket)
-            var message = { action: "resetrobot" };
-            var messageString = "{\"action\": \"" + message.action + "\"}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            var messageString = _this.createMessage("resetrobot");
+            _this.sendMessage(messageString);
         };
         this.setActuatorStates = function (d_1, theta_1, theta_2, theta_3, l_6) {
             var message = { action: "setactstates" };
             var actuatorStates = { d_1: d_1, theta_1: theta_1, theta_2: theta_2, theta_3: theta_3, l_6: l_6 };
             var actStatesJson = JSON.stringify(actuatorStates);
             var messageString = "{\"action\": \"" + message.action + "\", \"act_states\":" + actStatesJson + "}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            _this.sendMessage(messageString);
         };
         this.setEndEffectorPosition = function (x, y, z, phi, doOpenGripper) {
             var message = { action: "setendeffector" };
             var position = { x: x, y: y, z: z, phi: phi, doOpenGripper: doOpenGripper };
             var positionJson = JSON.stringify(position);
             var messageString = "{\"action\": \"" + message.action + "\", \"endeffector_position\":" + positionJson + "}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            _this.sendMessage(messageString);
         };
         this.moveOrigin = function (x, y, z, phi) {
             var message = { action: "moveorigin" };
             var position = { x: x, y: y, z: z, phi: phi };
             var positionJson = JSON.stringify(position);
             var messageString = "{\"action\": \"" + message.action + "\", \"org_position\":" + positionJson + "}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            _this.sendMessage(messageString);
         };
         this.nextPose = function () {
-            // checkSocketConnection(this.socket)
-            var message = { action: "getpose" };
-            var messageString = "{\"action\": \"" + message.action + "\"}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            var messageString = _this.createMessage("getpose");
+            _this.sendMessage(messageString);
         };
         this.streamPoses = function () {
-            var message = { action: "streamposes" };
-            var messageString = "{\"action\": \"" + message.action + "\"}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            var messageString = _this.createMessage("streamposes");
+            _this.sendMessage(messageString);
         };
         this.streamPosesNewOrg = function () {
-            var message = { action: "streamposesneworg" };
-            var messageString = "{\"action\": \"" + message.action + "\"}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            var messageString = _this.createMessage("streamposesneworg");
+            _this.sendMessage(messageString);
         };
         this.streamPosesControlNewOrg = function () {
-            var message = { action: "streamposescontrolneworg" };
-            var messageString = "{\"action\": \"" + message.action + "\"}";
-            _this.promise
-                .then(function (wsClient) {
-                wsClient.send(messageString);
-                console.log('Sending message' + messageString);
-            })
-                .catch(function (error) { return alert("Connection error: " + error); });
+            var messageString = _this.createMessage("streamposescontrolneworg");
+            _this.sendMessage(messageString);
         };
         this.promise = this.newClientPromise;
         this.areDimensionsInitialized = false;
@@ -153,6 +99,18 @@ var Communicator = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Communicator.prototype.createMessage = function (action) {
+        var message = { action: action };
+        return "{\"action\": \"" + message.action + "\"}";
+    };
+    Communicator.prototype.sendMessage = function (messageString) {
+        this.promise
+            .then(function (wsClient) {
+            wsClient.send(messageString);
+            console.log('Sending message' + messageString);
+        })
+            .catch(function (error) { return alert("Connection error: " + error); });
+    };
     return Communicator;
 }());
 export { Communicator };
