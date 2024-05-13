@@ -1,8 +1,8 @@
 import {Communicator} from "../communicator";
-import {RobotCrane} from "./robotcrane";
 import * as THREE from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GUI} from 'three/examples/jsm/libs/lil-gui.module.min.js'
+import {RobotCrane} from "./robotcrane";
 
 export class RobotGui {
     renderer: THREE.WebGLRenderer;
@@ -142,7 +142,7 @@ export class RobotGui {
         if (this.communicator.exception !== "") {
             alert(this.communicator.exception)
             this.communicator.exception = ""
-            console.log("Cancelling animation")
+            console.log("Cancelling animation because of an Exception")
             cancelAnimationFrame(id)
         }
 

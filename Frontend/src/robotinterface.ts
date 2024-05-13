@@ -33,27 +33,6 @@ document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 let communicator = new Communicator();
 
-// let robot = new RobotCrane(communicator.dimensions, communicator.pose);
-// robot.initScene(scene, light);
-//
-// let robotGui = new RobotGui(renderer, scene, camera, controls, communicator, robot)
-// robotGui.initGui()
-//
-// function init() {
-//     communicator.initRobot();
-//
-//     robot.initScene(scene, light);
-//
-//     robot.pose = communicator.pose
-//     robot.moveToPose()
-//
-//     renderer.render( scene, camera );
-//
-//     robotGui.animate()
-// }
-//
-// init()
-
 communicator.initRobot();
 communicator.nextPose()
 const animateInit = () => {

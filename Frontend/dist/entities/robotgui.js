@@ -83,7 +83,7 @@ var RobotGui = /** @class */ (function () {
             if (_this.communicator.exception !== "") {
                 alert(_this.communicator.exception);
                 _this.communicator.exception = "";
-                console.log("Cancelling animation");
+                console.log("Cancelling animation because of an Exception");
                 cancelAnimationFrame(id);
             }
             if (_this.counter !== _this.communicator.counter) {
