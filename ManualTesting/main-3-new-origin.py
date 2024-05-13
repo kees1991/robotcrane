@@ -1,7 +1,7 @@
 import numpy as np
 
 from Objects.RobotCrane import RobotCrane
-from Tooling.plot_tools import plot_robot
+from Tooling.plotting import plot_robot
 
 import matplotlib.pyplot as plt
 import matplotlib
@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 
 if __name__ == '__main__':
+    """Test robot new origin and IK at new origin"""
     robot = RobotCrane()
 
     # Move end-effector to desired position and orientation
@@ -22,20 +23,20 @@ if __name__ == '__main__':
 
     # Plot robot at initial origin
     fs = robot.get_frames()
-    print("End-frame\n{}".format(fs[-1]))
+    print(f"End-frame \n{fs[-1]}")
     plot_robot(robot)
 
     # Plot robot at new origin
     robot.set_new_origin((0.25, 0.25, 0.2, np.deg2rad(45)))
     fs_new = robot.get_frames()
-    print("End-frame after new origin\n{}".format(fs_new[-1]))
+    print(f"End-frame after new origin\n{fs_new[-1]}")
     plot_robot(robot)
 
     # Plot robot at new origin after moving end-effector to desired position and orientation
     act_states = robot.inverse_kinematics(x, y, z, phi)
     robot.set_act_states_t_1(act_states)
     fs_2 = robot.get_frames()
-    print("End-frame after IK at new origin\n{}".format(fs_2[-1]))
+    print(f"End-frame after IK at new origin\n{fs_2[-1]}")
     plot_robot(robot)
 
     plt.show()

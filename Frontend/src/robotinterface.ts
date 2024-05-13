@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import {Communicator} from "./communicator.js";
-import {RobotCrane} from "./entities/robotcrane.js";
-import {RobotGui} from "./entities/robotgui.js";
+import {RobotCrane} from "./Entities/robotcrane.js";
+import {RobotGui} from "./Entities/robotgui.js";
 
 let scene = new THREE.Scene();
 

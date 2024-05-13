@@ -8,26 +8,26 @@ from Objects.RobotCrane import RobotCrane
 import matplotlib.animation as animation
 
 from Objects.Trajectory import Trajectory
-from Tooling.Plotting import setup_animation_axes_3d, animate_3d
-from Tooling.plot_tools import plot_robot, plot_trajectory
+from Tooling.animation import setup_animation_axes_3d, animate_3d
+from Tooling.plotting import plot_robot, plot_trajectory
 import matplotlib
 matplotlib.use('TkAgg')
 
 if __name__ == '__main__':
+    """Test robot forward kinematics"""
     robot = RobotCrane()
 
-    # Next pose actuator states
-    d_1 = 0.7
-    theta_1 = np.deg2rad(0)
+    # Next actuator states
+    d_1 = 0.5
+    theta_1 = np.deg2rad(90)
     theta_2 = np.deg2rad(0)
     theta_3 = np.deg2rad(0)
-    l_6 = 0.6
+    l_6 = 0.1
 
-    # Set the next pose on the robot
     states = ActuatorStates(d_1, theta_1, theta_2, theta_3, l_6)
     robot.set_act_states_t_1(states)
 
-    print(Pose(robot).to_json())
+    print(f"Robot pose: {Pose(robot).to_json()}")
 
     plot_robot(robot)
     plt.show()
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     plot_trajectory(traj.get_act_state_time_series())
     plt.show()
 
-    print("Robot will move in {} s".format(round(traj.min_move_time, 2)))
+    print(f"Robot will move in {round(traj.min_move_time, 2)} s")
 
     # Create animation
     fig, ax, joint_lines, trajectory_line = setup_animation_axes_3d()

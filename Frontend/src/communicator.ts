@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import {ActuatorStates} from "./entities/actuatorstates";
-import {Pose} from "./entities/pose.js";
-import {OriginPosition, Position} from "./entities/position";
-import {Dimensions} from "./entities/dimensions.js";
+import {ActuatorStates} from "./Entities/actuatorstates";
+import {Pose} from "./Entities/pose.js";
+import {OriginPosition, Position} from "./Entities/position";
+import {Dimensions} from "./Entities/dimensions.js";
 
 export class Communicator {
     promise: Promise<any>;
@@ -38,7 +38,8 @@ export class Communicator {
 
     get newClientPromise() {
         return new Promise((resolve, reject) => {
-            let wsClient = new WebSocket("ws://ec2-52-45-198-60.compute-1.amazonaws.com:8000/robotcrane");
+            // let wsClient = new WebSocket("ws://ec2-52-45-198-60.compute-1.amazonaws.com:8000/robotcrane");
+            let wsClient = new WebSocket("ws://localhost:8000/robotcrane");
 
             wsClient.onopen = () => {
                 console.log("Connected to websocket");

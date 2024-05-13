@@ -2,18 +2,19 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from Objects.Pose import Pose
+from Objects.Trajectory import Trajectory
+from Tooling import plotting
+from Tooling.animation import setup_animation_axes_3d, animate_3d
+from Tooling.plotting import plot_robot
 from Objects.RobotCrane import RobotCrane
 
 import matplotlib.animation as animation
 import matplotlib
+
 matplotlib.use('TkAgg')
 
-from Objects.Trajectory import Trajectory
-from Tooling import plot_tools
-from Tooling.Plotting import setup_animation_axes_3d, animate_3d
-from Tooling.plot_tools import plot_robot
-
 if __name__ == '__main__':
+    """Test robot inverse kinematics"""
     robot = RobotCrane()
 
     # Desired end-effector position and Z-axis orientation
@@ -26,17 +27,18 @@ if __name__ == '__main__':
     act_states = robot.inverse_kinematics(x, y, z, phi, True)
     robot.set_act_states_t_1(act_states)
 
-    print(Pose(robot).to_json())
+    print(f"Robot pose: {Pose(robot).to_json()}")
 
     plot_robot(robot)
     plt.show()
 
     # Create the trajectory
-    traj = Trajectory(robot, 1/30)
+    traj = Trajectory(robot, 1 / 30)
     act_state_time_series = traj.calculate_trajectory()
-    print("Robot will move in {} s".format(round(traj.min_move_time, 2)))
+    print(f"Robot will move in {round(traj.min_move_time, 2)} s")
+
     traj.t = 0
-    plot_tools.plot_trajectory(traj.get_act_state_time_series())
+    plotting.plot_trajectory(traj.get_act_state_time_series())
     plt.show()
 
     fig, ax, joint_lines, trajectory_line = setup_animation_axes_3d()

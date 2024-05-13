@@ -1,12 +1,12 @@
-import numpy as np
-
 from Objects.ActuatorStates import ActuatorStates
 from Objects.OriginTrajectory import OriginTrajectory
 from Objects.SimpleController import SimpleController
-from Tooling.plot_tools import plot_control_metrics
+from Tooling.plotting import plot_control_metrics
 
 
 class ControlSimulator(object):
+    """Simulating the origin sensor signal and the control loop"""
+
     def __init__(self, robot):
         self.origin_sensor_frequency = 20  # Hz
         self.time_of_last_sensor_signal = 0
@@ -22,7 +22,7 @@ class ControlSimulator(object):
 
         self.org_traj = OriginTrajectory(robot.origin_t_0, self.new_org)
         self.duration = self.org_traj.mov_time
-        print("Moving time: {}".format(self.org_traj.mov_time))
+        print(f"Moving time: {self.org_traj.mov_time}")
 
         kp, ki, kd = 0.3, 0.74, 0.001
         self.d1_controller = SimpleController(kp=kp, ki=ki, kd=kd, control_frequency=self.control_frequency,
@@ -42,12 +42,8 @@ class ControlSimulator(object):
 
         # Init lists
         self.act_states_list = []
-        self.x = [robot.get_x_position()]
-        self.x_targets = [self.x_d]
-        self.y = [robot.get_y_position()]
-        self.y_targets = [self.y_d]
-        self.z = [robot.get_z_position()]
-        self.z_targets = [self.z_d]
+        self.x, self.y, self.z = [robot.get_x_position()], [robot.get_y_position()], [robot.get_z_position()]
+        self.x_targets, self.y_targets, self.z_targets = [self.x_d], [self.y_d], [self.z_d]
 
         desired_act_state = self.robot.inverse_kinematics(self.x_d, self.y_d, self.z_d, self.phi_d)
         self.d1_controller.set_target(desired_act_state.d_1)
@@ -83,10 +79,10 @@ class ControlSimulator(object):
         if t - self.time_of_last_control_signal >= (1/self.control_frequency):
             self.time_of_last_control_signal = t
 
-            self.d1_controller.adjust_signal(self.robot.act_states_t_1.d_1)
-            self.t1_controller.adjust_signal(self.robot.act_states_t_1.theta_1)
-            self.t2_controller.adjust_signal(self.robot.act_states_t_1.theta_2)
-            self.t3_controller.adjust_signal(self.robot.act_states_t_1.theta_3)
+            self.d1_controller.calculate_signal(self.robot.act_states_t_1.d_1)
+            self.t1_controller.calculate_signal(self.robot.act_states_t_1.theta_1)
+            self.t2_controller.calculate_signal(self.robot.act_states_t_1.theta_2)
+            self.t3_controller.calculate_signal(self.robot.act_states_t_1.theta_3)
         else:
             self.d1_controller.update_signal_list()
             self.t1_controller.update_signal_list()

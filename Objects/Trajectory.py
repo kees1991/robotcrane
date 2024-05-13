@@ -1,11 +1,10 @@
-from matplotlib import pyplot as plt
-
 from Objects.ActuatorStates import ActuatorStates
 from Tooling.trajectory import calculate_minimum_move_time, get_coefficients_nonzero_v_and_a, calculate_position, \
     calculate_velocity, calculate_acceleration
 
 
 class Trajectory(object):
+    """Defining a trajectory for the robot"""
 
     def __init__(self, robot, time_step_size=0.1):
         self.act_states_t_0 = robot.act_states_t_0
@@ -17,7 +16,7 @@ class Trajectory(object):
 
         self.time_step_size = time_step_size
 
-        self.last_act_state = None
+        self.next_act_state = None
         self.act_state_time_series = None
 
         self.t = 0
@@ -80,17 +79,17 @@ class Trajectory(object):
 
         self.next_step(t)
 
-        return self.last_act_state
+        return self.next_act_state
 
     def trajectory_next_step(self):
         if self.t >= self.mov_time:
-            return self.last_act_state
+            return self.next_act_state
 
         self.next_step(self.t)
 
         self.t += self.time_step_size
 
-        return self.last_act_state
+        return self.next_act_state
 
     def next_step(self, t):
         a_0_d_1, a_1_d_1, a_2_d_1, a_3_d_1 = self.d_1_coefficients
@@ -119,5 +118,5 @@ class Trajectory(object):
         l_6_v = calculate_velocity(a_1_l_6, a_2_l_6, a_3_l_6, t)
         l_6_a = calculate_acceleration(a_2_l_6, a_3_l_6, t)
 
-        self.last_act_state = ActuatorStates(d_1, t_1, t_2, t_3, l_6, d_1_v, t_1_v, t_2_v, t_3_v, l_6_v, d_1_a, t_1_a,
+        self.next_act_state = ActuatorStates(d_1, t_1, t_2, t_3, l_6, d_1_v, t_1_v, t_2_v, t_3_v, l_6_v, d_1_a, t_1_a,
                                              t_2_a, t_3_a, l_6_a)

@@ -13,6 +13,7 @@ from Objects.Trajectory import Trajectory
 
 class RobotResource(object):
     def __init__(self):
+        """Initialize streaming frequency and robot in its initial state"""
         self.streaming_freq = 20  # Hz
         self.robot = RobotCrane()
         self.robot.set_act_states_t_1(ActuatorStates(0.7, 0, 0, 0, 0.1))
@@ -33,6 +34,7 @@ class RobotResource(object):
         return Pose(self.robot).to_json()
 
     def set_actuator_states(self, states):
+        # Reset actuator states velocity and acceleration to zero
         if self.robot.act_states_t_1 is not None:
             old_states = self.robot.act_states_t_1
             old_states.reset_vel_and_acc()
@@ -63,37 +65,36 @@ class RobotResource(object):
         x, y, z = desired_org_position["x"], desired_org_position["y"], desired_org_position["z"]
         phi = np.deg2rad(desired_org_position["phi"])
 
-        # Move the origin
         self.robot.set_new_origin((x, y, z, phi))
         self.robot.set_act_states_t_1(self.robot.act_states_t_0)
 
         return "True"
 
     async def stream_pose(self, websocket):
-        # Create the robot trajectory
+        """Create robot trajectories and stream the poses"""
         traj = Trajectory(self.robot, 0.1)
-        print("Moving time: {}".format(traj.mov_time))
+        print(f"Moving time: {traj.mov_time}")
 
         await stream_pose(self.robot, None, traj, websocket, self.streaming_freq)
 
     async def stream_pose_new_origin(self, websocket):
-        # Create the origin trajectory
+        """Create origin and robot trajectories and stream the poses"""
         org_traj = OriginTrajectory(self.robot.origin_t_0, self.robot.origin_t_1)
 
-        # Create the robot trajectory
         traj = Trajectory(self.robot, 0.1)
         traj.set_mov_time(org_traj.min_move_time)
-        print("Moving time: {}".format(traj.mov_time))
+        print(f"Moving time: {traj.mov_time}")
 
         await stream_pose(self.robot, org_traj, traj, websocket, self.streaming_freq)
 
     async def stream_pose_controlled_new_origin(self, websocket):
+        """Simulate the origin sensor and control loop and stream the poses"""
         sim = ControlSimulator(self.robot)
         await stream_pose(self.robot, sim, sim, websocket, self.streaming_freq)
 
 
 async def stream_pose(robot, org_traj, traj, websocket, streaming_freq):
-    # Calculate the next trajectory step at the current time, and send it to the frontend
+    """Calculate the next trajectory step at the current time, and send it to the frontend"""
     last_milliseconds = 0
     start_milliseconds = round(time() * 1000)
 
@@ -101,7 +102,6 @@ async def stream_pose(robot, org_traj, traj, websocket, streaming_freq):
         milliseconds = round(time() * 1000)
         if milliseconds - last_milliseconds >= (1/streaming_freq) * 1000:
             seconds_since_start = (milliseconds - start_milliseconds) / 1000
-            print("Seconds since start: {}".format(seconds_since_start))
 
             # Update robot origin
             if org_traj is not None:

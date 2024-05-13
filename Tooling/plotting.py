@@ -60,23 +60,9 @@ def plot_robot(robot):
 def plot_trajectory(act_states):
     ts = []
 
-    d1 = []
-    t1 = []
-    t2 = []
-    t3 = []
-    l6 = []
-
-    d1_v = []
-    t1_v = []
-    t2_v = []
-    t3_v = []
-    l6_v = []
-
-    d1_a = []
-    t1_a = []
-    t2_a = []
-    t3_a = []
-    l6_a = []
+    d1, t1, t2, t3, l6 = [], [], [], [], []
+    d1_v, t1_v, t2_v, t3_v, l6_v = [], [], [], [], []
+    d1_a, t1_a, t2_a, t3_a, l6_a = [], [], [], [], []
 
     counter = 0
     for act_state in act_states:
@@ -156,7 +142,9 @@ def plot_org_trajectory(org_time_series):
     ax1.set_ylabel('Org position')
     ax1.set_title('Org position')
 
-def plot_control_metrics(time_list, x,y,z, x_target_list, y_target_list, z_target_list, d1_controller, t1_controller, t2_controller, t3_controller):
+
+def plot_control_metrics(time_list, x, y, z, x_target_list, y_target_list, z_target_list, d1_controller, t1_controller,
+                         t2_controller, t3_controller):
     # Plot Z-error
     fig_z, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, constrained_layout=True)
 
@@ -166,7 +154,7 @@ def plot_control_metrics(time_list, x,y,z, x_target_list, y_target_list, z_targe
     ax1.set_ylabel('Z-position')
     ax1.set_title('Target and Z-position')
 
-    print("Total error for D1: {}".format(d1_controller.total_error))
+    print(f"Total error for D1: {d1_controller.total_error}")
 
     ax2.plot(time_list, d1_controller.signal_list, color='#7c8994', label='D1 signal')
     ax2.plot(time_list, d1_controller.uncapped_signal_list, color='#7c8994', label='D1 uncapped signal')
@@ -198,9 +186,9 @@ def plot_control_metrics(time_list, x,y,z, x_target_list, y_target_list, z_targe
     ax_y.set_ylabel('Y-position')
     ax_y.set_title('Target and Y-position')
 
-    print("Total error for Theta1: {}".format(t1_controller.total_error))
-    print("Total error for Theta2: {}".format(t2_controller.total_error))
-    print("Total error for Theta3: {}".format(t3_controller.total_error))
+    print(f"Total error for Theta1: {t1_controller.total_error}")
+    print(f"Total error for Theta2: {t2_controller.total_error}")
+    print(f"Total error for Theta3: {t3_controller.total_error}")
 
     ax_xt.plot(time_list, t1_controller.signal_list, color='#7c8994', label='Theta 1')
     ax_xt.plot(time_list, t2_controller.signal_list, color='#296ca3', label='Theta 2')

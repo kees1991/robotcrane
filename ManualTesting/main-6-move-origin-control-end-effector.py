@@ -2,9 +2,10 @@ import numpy as np
 
 from Objects.ControlSimulator import ControlSimulator
 from Objects.RobotCrane import RobotCrane
-from Tooling.Plotting import create_control_animation
+from Tooling.animation import create_control_animation
 
 if __name__ == '__main__':
+    """Test control loop with moving origin"""
     robot = RobotCrane()
     robot.set_new_origin((0.4, 0.4, 0.4, np.deg2rad(0)))
 

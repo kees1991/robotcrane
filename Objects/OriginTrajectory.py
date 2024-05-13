@@ -2,6 +2,7 @@ from Tooling.trajectory import calculate_minimum_move_time, get_coefficients_non
 
 
 class OriginTrajectory(object):
+    """Defining a trajectory for the robot origin"""
 
     def __init__(self, origin_t_0, origin_t_1, max_vel=0.1, max_acc=0.1, max_ang_vel=0.1, max_ang_acc=0.1,
                  time_step_size=0.1):
@@ -20,9 +21,6 @@ class OriginTrajectory(object):
         self.t = 0
 
         self.mov_time = self.min_move_time
-
-    def set_mov_time(self, mov_time):
-        self.mov_time = mov_time
 
     @property
     def min_move_time(self):

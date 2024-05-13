@@ -13,11 +13,11 @@ async def json_handler(websocket, path):
         try:
             data = await websocket.recv()
         except websockets.ConnectionClosed:
-            print(f"Connection terminated")
+            print("Connection terminated")
             break
 
         if path == "/robotcrane":
-            print("Message received from client: {}".format(data))
+            print(f"Message received from client: {data}")
             jsondata = json.loads(data)
 
             action = jsondata["action"]
@@ -66,7 +66,7 @@ async def json_handler(websocket, path):
                         await websocket.send(reply)
 
             except ValueError as e:
-                await websocket.send("Exception: {}".format(e))
+                await websocket.send(f"Exception: {e}")
 
 start_server = websockets.serve(json_handler, "0.0.0.0", 8000)
 

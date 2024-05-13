@@ -1,11 +1,9 @@
 import json
-
-import numpy as np
-
-from Tooling.Plotting import convert_to_xyz_tuple
+from Tooling.animation import convert_to_xyz_tuple
 
 
 class Pose(object):
+    """Defining the robot pose including the origin"""
 
     def __init__(self, robot):
         self.org = (0.0, 0.0, 0.0)

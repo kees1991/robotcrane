@@ -2,8 +2,6 @@ import datetime
 
 from matplotlib import pyplot as plt, animation
 
-from Objects.ActuatorStates import ActuatorStates
-
 
 def setup_animation_axes_3d():
     fig = plt.figure(figsize=(16, 9), dpi=80)
@@ -93,4 +91,4 @@ def create_control_animation(act_states_list, org_time_series, robot):
                                   interval=25, blit=True)
 
     ct = datetime.datetime.now()
-    ani.save('robot-crane-control-{}.mp4'.format(ct.timestamp()), fps=30, extra_args=['-vcodec', 'libx264'])
+    ani.save(f"robot-crane-control-{ct.timestamp()}.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
