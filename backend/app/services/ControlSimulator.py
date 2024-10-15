@@ -1,7 +1,7 @@
 from backend.app.models.ActuatorStates import ActuatorStates
 from backend.app.models.OriginTrajectory import OriginTrajectory
 from backend.app.services.SimpleController import SimpleController
-from backend.app.services.tools.plotting import plot_control_metrics
+from backend.app.services.tools.Plotter import plot_control_metrics
 
 
 class ControlSimulator(object):

@@ -2,7 +2,7 @@ import numpy as np
 
 from backend.app.services.ControlSimulator import ControlSimulator
 from backend.app.models.RobotCrane import RobotCrane
-from backend.app.services.tools.animation import create_control_animation
+from backend.app.services.tools.AnimationBuilder import create_control_animation
 
 if __name__ == '__main__':
     """Test control loop with moving origin"""

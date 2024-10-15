@@ -3,9 +3,9 @@ from matplotlib import pyplot as plt
 
 from backend.app.models.Pose import Pose
 from backend.app.models.Trajectory import Trajectory
-from backend.app.services.tools import plotting
-from backend.app.services.tools.animation import setup_animation_axes_3d, animate_3d
-from backend.app.services.tools.plotting import plot_robot
+from backend.app.services.tools import Plotter
+from backend.app.services.tools.AnimationBuilder import setup_animation_axes_3d, animate_3d
+from backend.app.services.tools.Plotter import plot_robot
 from backend.app.models.RobotCrane import RobotCrane
 
 import matplotlib.animation as animation
