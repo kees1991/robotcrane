@@ -3,7 +3,7 @@ import json
 
 import websockets
 
-from Interface.RobotResource import RobotResource
+from backend.app.views.RobotResource import RobotResource
 
 
 async def json_handler(websocket, path):

@@ -1,7 +1,7 @@
 import numpy as np
 
-from Objects.RobotCrane import RobotCrane
-from Tooling.plotting import plot_robot
+from backend.app.models.RobotCrane import RobotCrane
+from backend.app.services.tools.plotting import plot_robot
 
 import matplotlib.pyplot as plt
 import matplotlib

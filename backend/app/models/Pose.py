@@ -1,5 +1,5 @@
 import json
-from Tooling.animation import convert_to_xyz_tuple
+from backend.app.services.tools.animation import convert_to_xyz_tuple
 
 
 class Pose(object):

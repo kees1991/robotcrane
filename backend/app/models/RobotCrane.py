@@ -1,7 +1,7 @@
 import numpy as np
 
-from Objects.ActuatorStates import ActuatorStates
-from Tooling.forwardkinematics import retrieve_frames, retrieve_ts
+from backend.app.models.ActuatorStates import ActuatorStates
+from backend.app.services.tools.forwardkinematics import retrieve_frames, retrieve_ts
 
 
 class RobotCrane(object):

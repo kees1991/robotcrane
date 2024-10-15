@@ -1,9 +1,9 @@
 import numpy as np
 
-from Objects.ActuatorStates import ActuatorStates
-from Objects.RobotCrane import RobotCrane
-from Objects.SimpleController import SimpleController
-from Tooling.plotting import plot_control_metrics
+from backend.app.models.ActuatorStates import ActuatorStates
+from backend.app.models.RobotCrane import RobotCrane
+from backend.app.services.SimpleController import SimpleController
+from backend.app.services.tools.plotting import plot_control_metrics
 
 if __name__ == '__main__':
     """Test control loop"""
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     y = [robot.get_y_position()]
     z = [robot.get_z_position()]
 
-    # Init controllers
+    # Init services
     sample_rate = 1
     kp, ki, kd = 0.15, 0, 0.019
     time_step_index_for_updating_signal = round(sample_rate/time_step_size)

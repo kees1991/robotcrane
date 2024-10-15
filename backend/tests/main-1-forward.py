@@ -1,15 +1,15 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from Objects.ActuatorStates import ActuatorStates
-from Objects.Pose import Pose
-from Objects.RobotCrane import RobotCrane
+from backend.app.models.ActuatorStates import ActuatorStates
+from backend.app.models.Pose import Pose
+from backend.app.models.RobotCrane import RobotCrane
 
 import matplotlib.animation as animation
 
-from Objects.Trajectory import Trajectory
-from Tooling.animation import setup_animation_axes_3d, animate_3d
-from Tooling.plotting import plot_robot, plot_trajectory
+from backend.app.models.Trajectory import Trajectory
+from backend.app.services.tools.animation import setup_animation_axes_3d, animate_3d
+from backend.app.services.tools.plotting import plot_robot, plot_trajectory
 import matplotlib
 matplotlib.use('TkAgg')
 

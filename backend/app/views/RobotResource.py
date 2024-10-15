@@ -3,12 +3,12 @@ from time import time
 
 import numpy as np
 
-from Objects.ActuatorStates import ActuatorStates
-from Objects.ControlSimulator import ControlSimulator
-from Objects.OriginTrajectory import OriginTrajectory
-from Objects.Pose import Pose
-from Objects.RobotCrane import RobotCrane
-from Objects.Trajectory import Trajectory
+from backend.app.models.ActuatorStates import ActuatorStates
+from backend.app.services.ControlSimulator import ControlSimulator
+from backend.app.models.OriginTrajectory import OriginTrajectory
+from backend.app.models.Pose import Pose
+from backend.app.models.RobotCrane import RobotCrane
+from backend.app.models.Trajectory import Trajectory
 
 
 class RobotResource(object):
@@ -122,7 +122,7 @@ async def stream_pose(robot, org_traj, traj, websocket, streaming_freq):
 
             robot.set_act_states_t_1(next_act_state)
 
-            # Retrieve the Pose for the Frontend rendering
+            # Retrieve the Pose for the frontend rendering
             pose = Pose(robot)
 
             # Send the pose over the websocket

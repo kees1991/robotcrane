@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Communicator } from "./communicator.js";
-import { RobotCrane } from "./Entities/robotcrane.js";
-import { RobotGui } from "./Entities/robotgui.js";
+import { RobotCrane } from "../interfaces/robotcrane.js";
+import { RobotGui } from "../interfaces/robotgui.js";
 var scene = new THREE.Scene();
 // Add grid
 var grid = new THREE.GridHelper(2, 10);

@@ -1,12 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from Objects.Pose import Pose
-from Objects.Trajectory import Trajectory
-from Tooling import plotting
-from Tooling.animation import setup_animation_axes_3d, animate_3d
-from Tooling.plotting import plot_robot
-from Objects.RobotCrane import RobotCrane
+from backend.app.models.Pose import Pose
+from backend.app.models.Trajectory import Trajectory
+from backend.app.services.tools import plotting
+from backend.app.services.tools.animation import setup_animation_axes_3d, animate_3d
+from backend.app.services.tools.plotting import plot_robot
+from backend.app.models.RobotCrane import RobotCrane
 
 import matplotlib.animation as animation
 import matplotlib

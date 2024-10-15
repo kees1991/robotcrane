@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.animation as animation
 from matplotlib import pyplot as plt
 
-from Objects.OriginTrajectory import OriginTrajectory
-from Objects.RobotCrane import RobotCrane
-from Objects.Trajectory import Trajectory
-from Tooling.animation import setup_animation_axes_3d, animate_3d_with_origin
-from Tooling.plotting import plot_robot
+from backend.app.models.OriginTrajectory import OriginTrajectory
+from backend.app.models.RobotCrane import RobotCrane
+from backend.app.models.Trajectory import Trajectory
+from backend.app.services.tools.animation import setup_animation_axes_3d, animate_3d_with_origin
+from backend.app.services.tools.plotting import plot_robot
 
 import matplotlib
 matplotlib.use('TkAgg')

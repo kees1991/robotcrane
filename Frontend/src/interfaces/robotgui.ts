@@ -1,4 +1,4 @@
-import {Communicator} from "../communicator";
+import {Communicator} from "../services/communicator";
 import * as THREE from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GUI} from 'three/examples/jsm/libs/lil-gui.module.min.js'

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Pose } from "./Entities/pose.js";
-import { Dimensions } from "./Entities/dimensions.js";
+import { Pose } from "../interfaces/pose.js";
+import { Dimensions } from "../interfaces/dimensions.js";
 var Communicator = /** @class */ (function () {
     function Communicator() {
         var _this = this;
@@ -72,7 +72,8 @@ var Communicator = /** @class */ (function () {
         get: function () {
             var _this = this;
             return new Promise(function (resolve, reject) {
-                var wsClient = new WebSocket("ws://ec2-52-90-49-194.compute-1.amazonaws.com:8000/robotcrane");
+                // let wsClient = new WebSocket("ws://ec2-52-90-49-194.compute-1.amazonaws.com:8000/robotcrane");
+                var wsClient = new WebSocket("ws://localhost:8000/robotcrane");
                 wsClient.onopen = function () {
                     console.log("Connected to websocket");
                     resolve(wsClient);
