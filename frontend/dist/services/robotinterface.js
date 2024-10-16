@@ -26,7 +26,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 var controls = new OrbitControls(camera, renderer.domElement);
 var communicator = new Communicator();
-communicator.initRobot();
+// communicator.initRobot();
 communicator.nextPose();
 var animateInit = function () {
     var id = requestAnimationFrame(animateInit);

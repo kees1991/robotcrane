@@ -4,53 +4,53 @@ import { Dimensions } from "../interfaces/dimensions.js";
 var Communicator = /** @class */ (function () {
     function Communicator() {
         var _this = this;
-        this.initRobot = function () {
-            var messageString = _this.createMessage("initrobot");
-            _this.sendMessage(messageString);
-        };
+        // initRobot = () => {
+        //     let messageString = this.createMessage("initrobot");
+        //     this.sendMessage(messageString);
+        // }
         this.resetRobot = function () {
-            var messageString = _this.createMessage("resetrobot");
+            var messageString = _this.createMessage("reset_robot");
             _this.sendMessage(messageString);
         };
         this.setActuatorStates = function (d_1, theta_1, theta_2, theta_3, l_6) {
-            var message = { action: "setactstates" };
+            var message = { action: "set_actuator_states" };
             var actuatorStates = { d_1: d_1, theta_1: theta_1, theta_2: theta_2, theta_3: theta_3, l_6: l_6 };
             var actStatesJson = JSON.stringify(actuatorStates);
-            var messageString = "{\"action\": \"" + message.action + "\", \"act_states\":" + actStatesJson + "}";
+            var messageString = "{\"action\": \"" + message.action + "\", \"actuator_states\":" + actStatesJson + "}";
             _this.sendMessage(messageString);
         };
         this.setEndEffectorPosition = function (x, y, z, phi, doOpenGripper) {
-            var message = { action: "setendeffector" };
+            var message = { action: "set_end_effector" };
             var position = { x: x, y: y, z: z, phi: phi, doOpenGripper: doOpenGripper };
             var positionJson = JSON.stringify(position);
-            var messageString = "{\"action\": \"" + message.action + "\", \"endeffector_position\":" + positionJson + "}";
+            var messageString = "{\"action\": \"" + message.action + "\", \"end_effector_position\":" + positionJson + "}";
             _this.sendMessage(messageString);
         };
         this.moveOrigin = function (x, y, z, phi) {
-            var message = { action: "moveorigin" };
+            var message = { action: "set_origin" };
             var position = { x: x, y: y, z: z, phi: phi };
             var positionJson = JSON.stringify(position);
-            var messageString = "{\"action\": \"" + message.action + "\", \"org_position\":" + positionJson + "}";
+            var messageString = "{\"action\": \"" + message.action + "\", \"origin_position\":" + positionJson + "}";
             _this.sendMessage(messageString);
         };
         this.nextPose = function () {
-            var messageString = _this.createMessage("getpose");
+            var messageString = _this.createMessage("get_pose");
             _this.sendMessage(messageString);
         };
         this.streamPoses = function () {
-            var messageString = _this.createMessage("streamposes");
+            var messageString = _this.createMessage("stream_poses");
             _this.sendMessage(messageString);
         };
         this.streamPosesNewOrg = function () {
-            var messageString = _this.createMessage("streamposesneworg");
+            var messageString = _this.createMessage("stream_poses_for_new_origin");
             _this.sendMessage(messageString);
         };
         this.streamPosesControlNewOrg = function () {
-            var messageString = _this.createMessage("streamposescontrolneworg");
+            var messageString = _this.createMessage("stream_poses_for_new_origin_and_control_end_effector");
             _this.sendMessage(messageString);
         };
         this.promise = this.newClientPromise;
-        this.areDimensionsInitialized = false;
+        this.areDimensionsInitialized = true;
         this.dimensions = { l_1: 1.0, l_2: 0.4, l_3: 0.4, d_4: 0.2, l_5: 0.1, l_7: 0.1 };
         this.pose = {
             j_1: new THREE.Vector3(0.0, 0.0, 0.0),
