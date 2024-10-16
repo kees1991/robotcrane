@@ -38,7 +38,7 @@ export class Communicator {
 
     get newClientPromise() {
         return new Promise((resolve, reject) => {
-            let wsClient = new WebSocket("ws://localhost:8000/robotcrane");
+            let wsClient = new WebSocket("ws://ec2-52-90-49-194.compute-1.amazonaws.com/robotcrane");
 
             wsClient.onopen = () => {
                 console.log("Connected to websocket");
