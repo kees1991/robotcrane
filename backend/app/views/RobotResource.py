@@ -125,7 +125,6 @@ async def stream_pose(robot, org_traj, traj, websocket, streaming_freq):
 
             # Retrieve the Pose for the frontend rendering
             pose = Pose(robot)
-            print("Processing")
 
             # Send the pose over the websocket
             await websocket.send_text(pose.to_json())
