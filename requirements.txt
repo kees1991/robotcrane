@@ -11,3 +11,5 @@ python-dateutil==2.9.0.post0
 scipy==1.12.0
 six==1.16.0
 websockets==12.0
+fastapi==0.74.*
+uvicorn[standard]==0.17.*

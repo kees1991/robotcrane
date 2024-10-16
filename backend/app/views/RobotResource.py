@@ -1,3 +1,4 @@
+import asyncio
 import json
 from time import time
 
@@ -124,7 +125,9 @@ async def stream_pose(robot, org_traj, traj, websocket, streaming_freq):
 
             # Retrieve the Pose for the frontend rendering
             pose = Pose(robot)
+            print("Processing")
 
             # Send the pose over the websocket
-            await websocket.send(pose.to_json())
+            await websocket.send_text(pose.to_json())
+            await asyncio.sleep(0)
             last_milliseconds = milliseconds
