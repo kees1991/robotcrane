@@ -4,10 +4,6 @@ import { Dimensions } from "../interfaces/dimensions.js";
 var Communicator = /** @class */ (function () {
     function Communicator() {
         var _this = this;
-        // initRobot = () => {
-        //     let messageString = this.createMessage("initrobot");
-        //     this.sendMessage(messageString);
-        // }
         this.resetRobot = function () {
             var messageString = _this.createMessage("reset_robot");
             _this.sendMessage(messageString);
