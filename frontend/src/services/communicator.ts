@@ -24,8 +24,8 @@ export class Communicator {
             j_3: new THREE.Vector3(0.4, 0.7, 0.0),
             j_4: new THREE.Vector3(0.8, 0.7, 0.0),
             j_5: new THREE.Vector3(0.8, 0.5, 0.0),
-            j_6: new THREE.Vector3(1.0, 0.5, 0.0),
-            j_7: new THREE.Vector3(1.1, 0.5, 0.0),
+            j_6: new THREE.Vector3(0.9, 0.5, 0.0),
+            j_7: new THREE.Vector3(1.0, 0.5, 0.0),
             theta_0: THREE.MathUtils.degToRad(0),
             theta_1: THREE.MathUtils.degToRad(0),
             theta_2: THREE.MathUtils.degToRad(0),
@@ -38,7 +38,8 @@ export class Communicator {
 
     get newClientPromise() {
         return new Promise((resolve, reject) => {
-            let wsClient = new WebSocket("ws://ec2-52-90-49-194.compute-1.amazonaws.com:80/robotcrane");
+            // @ts-ignore
+            let wsClient = new WebSocket(import.meta.env.VITE_API_URL);
 
             wsClient.onopen = () => {
                 console.log("Connected to websocket");

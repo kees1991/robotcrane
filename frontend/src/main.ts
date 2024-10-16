@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
-import {Communicator} from "./communicator.js";
-import {RobotCrane} from "../interfaces/robotcrane.js";
-import {RobotGui} from "../interfaces/robotgui.js";
+import {Communicator} from "./services/communicator.js";
+import {RobotCrane} from "./interfaces/robotcrane.js";
+import {RobotGui} from "./interfaces/robotgui.js";
 
 let scene = new THREE.Scene();
 
@@ -33,7 +33,6 @@ document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 let communicator = new Communicator();
 
-// communicator.initRobot();
 communicator.nextPose()
 const animateInit = () => {
     let id = requestAnimationFrame( animateInit );

@@ -11,14 +11,14 @@ from backend.app.views.RobotResource import RobotResource
 from backend.app.views.RobotTask import RobotTask
 
 app = FastAPI()
-app.mount("/frontend", StaticFiles(directory="frontend/dist"), name="static")
+app.mount("/assets", StaticFiles(directory="frontend/static/assets"), name="static")
 
-templates = Jinja2Templates(directory="frontend/public")
+templates = Jinja2Templates(directory="frontend/static")
 
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_html(request: Request):
-    return templates.TemplateResponse("robotinterface.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 class WebSocketAPI:
     def __init__(self):
