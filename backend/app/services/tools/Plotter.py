@@ -23,7 +23,7 @@ def plot_robot(robot):
     ax.plot_wireframe(x, y, np.array([z]))
     ax.scatter(x[1:], y[1:], z[1:], c="red", marker="o")
     # plot axes using cylinders
-    params = robot.dh_params[:, 0:3]
+    params = robot.denavit_hartenberg_parameters[:, 0:3]
     cy_radius = np.amax(params[:, 0:2]) * 0.05
     cy_len = cy_radius * 4.
     cy_div = 4 + 1

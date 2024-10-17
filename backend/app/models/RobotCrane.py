@@ -1,8 +1,5 @@
-import numpy as np
-
 from backend.app.models.ActuatorStates import ActuatorStates
-from backend.app.services.tools.KinematicsHelper import calculate_state_frames, calculate_transformation_matrices, \
-    calculate_dh_parameters, calculate_origin_translation_matrix
+from backend.app.services.tools.KinematicsHelper import *
 
 
 class RobotCrane(object):
@@ -40,14 +37,12 @@ class RobotCrane(object):
         self.act_states_t_1 = ActuatorStates(0.7, np.deg2rad(0), np.deg2rad(0), np.deg2rad(0), 0.1)
 
     @property
-    def dh_params(self):
-        """Calculate the Denavit-Hartenberg parameters"""
+    def denavit_hartenberg_parameters(self):
         return calculate_dh_parameters(self.l_2, self.l_3, self.d_4, self.l_5, self.act_states_t_1)
 
     @property
-    def t_matrices(self):
-        """Calculate the transformation matrices"""
-        return calculate_transformation_matrices(self.dh_params, len(self.dh_params), self.T_origin)
+    def transformation_matrices(self):
+        return calculate_transformation_matrices(self.denavit_hartenberg_parameters, self.T_origin)
 
     def set_act_states_t_0(self, act_states):
         self.act_states_t_0 = act_states
@@ -99,46 +94,15 @@ class RobotCrane(object):
 
     def get_frames(self):
         """Get the robot state frames"""
-        return np.around(calculate_state_frames(len(self.dh_params), self.t_matrices), 5)
+        return np.around(calculate_state_frames(len(self.denavit_hartenberg_parameters), self.transformation_matrices), 5)
 
     def inverse_kinematics(self, x, y, z, phi, do_open_gripper=True):
         """Robot inverse kinematics, including origin translation"""
-        # Translate goal wrt new origin
-        translated_goal = np.dot(self.T_origin, np.array([x, y, z, 1]))
-        x, y, z = translated_goal[0], translated_goal[1], translated_goal[2]
 
-        if self.origin_t_1 is not None:
-            phi -= self.origin_t_1[3]
+        phi, x, y, z = translate_desired_end_effector_state_for_new_origin(self.T_origin, self.origin_t_1, phi, x, y, z)
 
-        # For IK we assume that gripper will be open or closed
-        if do_open_gripper:
-            l_6 = 0.1
-        else:
-            l_6 = 0.0
-
-        g_x = x - l_6 * np.cos(phi)
-        g_y = y - l_6 * np.sin(phi)
-
-        w_x = g_x - self.l_5 * np.cos(phi)
-        w_y = g_y - self.l_5 * np.sin(phi)
-
-        c_2 = (w_x ** 2 + w_y ** 2 - self.l_2 ** 2 - self.l_3 ** 2) / (2 * self.l_2 * self.l_3)
-        if c_2 > 1:
-            print(f"Cos of theta 2 is {c_2}, while it cannot be larger than 1")
-            raise ValueError("Given end-effector position is out of reach")
-
-        # Other solution: - np.sqrt(1 - c_2 ** 2)
-        s_2 = np.sqrt(1 - c_2 ** 2)
-
-        theta_2 = np.arctan2(s_2, c_2)
-
-        k_1 = self.l_2 + self.l_3 * (np.cos(theta_2))
-        k_2 = self.l_3 * (np.sin(theta_2))
-        theta_1 = np.arctan2(w_y, w_x) - np.arctan2(k_2, k_1)
-
-        theta_3 = phi - theta_1 - theta_2
-
-        d_1 = z - self.d_4
+        d_1, theta_1, theta_2, theta_3, l_6 = calculate_inverse_kinematics(
+            self.l_2, self.l_3, self.d_4, self.l_5, do_open_gripper, phi, x, y, z)
 
         return ActuatorStates(d_1, theta_1, theta_2, theta_3, l_6)
 
