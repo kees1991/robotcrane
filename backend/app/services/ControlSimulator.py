@@ -1,7 +1,6 @@
 from backend.app.models.ActuatorStates import ActuatorStates
 from backend.app.models.OriginTrajectory import OriginTrajectory
 from backend.app.services.SimpleController import SimpleController
-from backend.app.services.tools.Plotter import plot_control_metrics
 
 
 class ControlSimulator(object):
@@ -108,7 +107,3 @@ class ControlSimulator(object):
         self.x.append(robot.get_x_position())
         self.y.append(robot.get_y_position())
         self.z.append(robot.get_z_position())
-
-    def plot_metrics(self, time_list):
-        plot_control_metrics(time_list, self.x, self.y, self.z, self.x_targets, self.y_targets, self.z_targets,
-                             self.d1_controller, self.t1_controller, self.t2_controller, self.t3_controller)

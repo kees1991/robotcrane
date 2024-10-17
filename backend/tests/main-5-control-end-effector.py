@@ -3,7 +3,7 @@ import numpy as np
 from backend.app.models.ActuatorStates import ActuatorStates
 from backend.app.models.RobotCrane import RobotCrane
 from backend.app.services.SimpleController import SimpleController
-from backend.app.services.tools.Plotter import plot_control_metrics
+from backend.tests.Plotter import plot_control_metrics
 
 if __name__ == '__main__':
     """Test control loop"""

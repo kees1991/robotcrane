@@ -1,7 +1,7 @@
 import numpy as np
 
 from backend.app.models.RobotCrane import RobotCrane
-from backend.app.services.tools.Plotter import plot_robot
+from backend.tests.Plotter import plot_robot
 
 import matplotlib.pyplot as plt
 import matplotlib

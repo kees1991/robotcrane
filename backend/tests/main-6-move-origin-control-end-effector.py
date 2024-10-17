@@ -2,7 +2,8 @@ import numpy as np
 
 from backend.app.services.ControlSimulator import ControlSimulator
 from backend.app.models.RobotCrane import RobotCrane
-from backend.app.services.tools.AnimationBuilder import create_control_animation
+from AnimationBuilder import create_control_animation
+from backend.tests import Plotter
 
 if __name__ == '__main__':
     """Test control loop with moving origin"""
@@ -18,6 +19,8 @@ if __name__ == '__main__':
         sim.trajectory_next_step_real_time(t)
         org_time_series.append(sim.origin_next_step_real_time(t))
 
-    sim.plot_metrics(time_list)
+    Plotter.plot_control_metrics(
+        time_list, sim.x, sim.y, sim.z, sim.x_targets, sim.y_targets, sim.z_targets, sim.d1_controller,
+        sim.t1_controller, sim.t2_controller, sim.t3_controller)
 
     create_control_animation(sim.act_states_list, org_time_series, robot)

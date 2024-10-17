@@ -8,8 +8,8 @@ from backend.app.models.RobotCrane import RobotCrane
 import matplotlib.animation as animation
 
 from backend.app.models.Trajectory import Trajectory
-from backend.app.services.tools.AnimationBuilder import setup_animation_axes_3d, animate_3d
-from backend.app.services.tools.Plotter import plot_robot, plot_trajectory
+from AnimationBuilder import setup_animation_axes_3d, animate_3d
+from backend.tests.Plotter import plot_robot, plot_trajectory
 import matplotlib
 matplotlib.use('TkAgg')
 

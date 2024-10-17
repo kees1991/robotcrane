@@ -1,5 +1,9 @@
 import json
-from backend.app.services.tools.AnimationBuilder import convert_to_xyz_tuple
+
+
+def convert_to_xyz_tuple(frame):
+    frame_t = frame[0:3, 3:4].T
+    return tuple(map(tuple, frame_t))[0]
 
 
 class Pose(object):

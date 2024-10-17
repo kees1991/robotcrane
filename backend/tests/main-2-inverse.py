@@ -3,9 +3,9 @@ from matplotlib import pyplot as plt
 
 from backend.app.models.Pose import Pose
 from backend.app.models.Trajectory import Trajectory
-from backend.app.services.tools import Plotter
-from backend.app.services.tools.AnimationBuilder import setup_animation_axes_3d, animate_3d
-from backend.app.services.tools.Plotter import plot_robot
+from backend.tests import Plotter
+from AnimationBuilder import setup_animation_axes_3d, animate_3d
+from backend.tests.Plotter import plot_robot
 from backend.app.models.RobotCrane import RobotCrane
 
 import matplotlib.animation as animation
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     print(f"Robot will move in {round(traj.min_move_time, 2)} s")
 
     traj.t = 0
-    plotting.plot_trajectory(traj.get_act_state_time_series())
+    Plotter.plot_trajectory(traj.get_act_state_time_series())
     plt.show()
 
     fig, ax, joint_lines, trajectory_line = setup_animation_axes_3d()
