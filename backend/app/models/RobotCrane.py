@@ -1,25 +1,26 @@
 import numpy as np
 
 from backend.app.models.ActuatorStates import ActuatorStates
-from backend.app.services.tools.ForwardKinematicsProvider import retrieve_frames, retrieve_ts
+from backend.app.services.tools.KinematicsHelper import calculate_state_frames, calculate_transformation_matrices, \
+    calculate_dh_parameters, calculate_origin_translation_matrix
 
 
 class RobotCrane(object):
 
-    def __init__(self, base_column_length=1, upper_arm_length=0.4, lower_arm_length=0.4, wrist_ext_length=-0.2,
-                 gripper_length=0.1, max_jaw_ext_length=0.1, max_elbow_angle=150):
+    def __init__(self):
         # Robot dimensions
-        self.l_1 = base_column_length  # base column length
-        self.l_2 = upper_arm_length  # upper arm length
-        self.l_3 = lower_arm_length  # lower arm length
-        self.d_4 = wrist_ext_length  # wrist extension length
-        self.l_5 = gripper_length  # gripper length
-        self.l_7 = max_jaw_ext_length  # maximum jaw extension length
+        self.l_1 = 1  # base column length
+        self.l_2 = 0.4  # upper arm length
+        self.l_3 = 0.4  # lower arm length
+        self.d_4 = -0.2  # wrist extension length
+        self.l_5 = 0.1  # gripper length
+        self.l_7 = 0.1  # maximum jaw extension length
 
+        # Max positions
         self.min_angle = np.deg2rad(-360)
         self.max_angle = np.deg2rad(360)
-        self.min_theta_2 = np.deg2rad(-max_elbow_angle)
-        self.max_theta_2 = np.deg2rad(max_elbow_angle)
+        self.min_theta_2 = np.deg2rad(-150)
+        self.max_theta_2 = np.deg2rad(150)
 
         # Max velocity and max acceleration
         self.max_vel = 0.7
@@ -27,53 +28,32 @@ class RobotCrane(object):
         self.max_ang_vel = 0.7
         self.max_ang_acc = 0.7
 
+        # Initial origin and next origin
         self.origin_t_0 = (0, 0, 0, np.deg2rad(0))
-        self.origin_t_1 = None
+        self.origin_t_1 = (0, 0, 0, np.deg2rad(0))
 
         # Origin translation matrix
-        self.T_origin = np.array(
-            [
-                [1., 0., 0., 0.],
-                [0., 1., 0., 0.],
-                [0., 0., 1., 0.],
-                [0., 0., 0., 1.]
-            ]
-        )
+        self.T_origin = np.identity(4)
 
-        # Initial pose
+        # Initial pose and next pose
         self.act_states_t_0 = ActuatorStates(0.7, np.deg2rad(0), np.deg2rad(0), np.deg2rad(0), 0.1)
-
-        # Next pose
-        self.act_states_t_1 = None
+        self.act_states_t_1 = ActuatorStates(0.7, np.deg2rad(0), np.deg2rad(0), np.deg2rad(0), 0.1)
 
     @property
     def dh_params(self):
-        """Calculate the Denavit-Hartenberg parameters for the robot crane"""
-        l_2, l_3, d_4, l_5 = self.l_2, self.l_3, self.d_4, self.l_5
-        d_1, theta_1, theta_2, theta_3, l_6 = self.act_states_t_1.get_states()
-
-        return np.array(
-            [
-                [d_1, 0, 0, 0],  # lift
-                [0, l_2, 0, theta_1],  # swing rotation and upper arm
-                [0, l_3, 0, theta_2],  # elbow rotation and lower arm
-                [d_4, 0, 0, theta_3],  # wrist rotation and wrist extension
-                [0, l_5, 0, 0],  # fixed jaw
-                [0, l_6, 0, 0],  # gripper
-            ]
-        )
+        """Calculate the Denavit-Hartenberg parameters"""
+        return calculate_dh_parameters(self.l_2, self.l_3, self.d_4, self.l_5, self.act_states_t_1)
 
     @property
     def t_matrices(self):
-        # Transformation matrices
-        return retrieve_ts(self.dh_params, len(self.dh_params), self.T_origin)
+        """Calculate the transformation matrices"""
+        return calculate_transformation_matrices(self.dh_params, len(self.dh_params), self.T_origin)
 
     def set_act_states_t_0(self, act_states):
         self.act_states_t_0 = act_states
 
     def set_act_states_t_1(self, act_states):
         self.validate_act_states(act_states)
-
         self.act_states_t_1 = act_states
 
     def validate_act_states(self, act_states):
@@ -102,19 +82,24 @@ class RobotCrane(object):
             raise ValueError("Position out of reach: L6 is out of bounds")
 
     def get_x_position(self):
+        """Get the x position of the robot end effector"""
         return self.get_frames()[-1][0][3]
 
     def get_y_position(self):
+        """Get the y position of the robot end effector"""
         return self.get_frames()[-1][1][3]
 
     def get_z_position(self):
+        """Get the z position of the robot end effector"""
         return self.get_frames()[-1][2][3]
 
     def get_phi(self):
+        """Get the rotation of the robot end effector"""
         return self.origin_t_1[3] + self.act_states_t_1.theta_1 + self.act_states_t_1.theta_2 + self.act_states_t_1.theta_3
 
     def get_frames(self):
-        return np.around(retrieve_frames(len(self.dh_params), self.t_matrices), 5)
+        """Get the robot state frames"""
+        return np.around(calculate_state_frames(len(self.dh_params), self.t_matrices), 5)
 
     def inverse_kinematics(self, x, y, z, phi, do_open_gripper=True):
         """Robot inverse kinematics, including origin translation"""
@@ -161,12 +146,4 @@ class RobotCrane(object):
         """Set new origin and update the origin translation matrix"""
         self.origin_t_1 = new_origin
 
-        x, y, z, phi = new_origin[0], new_origin[1], new_origin[2], new_origin[3]
-        self.T_origin = np.array(
-            [
-                [np.cos(phi), np.sin(phi), 0., -x],
-                [-np.sin(phi), np.cos(phi), 0., -y],
-                [0., 0., 1., -z],
-                [0., 0., 0., 1.]
-            ]
-        )
+        self.T_origin = calculate_origin_translation_matrix(new_origin)

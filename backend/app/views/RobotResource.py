@@ -17,8 +17,6 @@ class RobotResource(object):
         """Initialize streaming frequency and robot in its initial state"""
         self.streaming_freq = 20  # Hz
         self.robot = RobotCrane()
-        self.robot.set_act_states_t_1(ActuatorStates(0.7, 0, 0, 0, 0.1))
-        self.robot.set_new_origin((0, 0, 0, 0))
 
     def get_robot_dimensions(self):
         dimensions = {
