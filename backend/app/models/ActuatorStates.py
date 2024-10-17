@@ -21,10 +21,3 @@ class ActuatorStates(object):
     def reset_vel_and_acc(self):
         self.d_1_v, self.theta_1_v, self.theta_2_v, self.theta_3_v, self.l_6_v = 0, 0, 0, 0, 0
         self.d_1_a, self.theta_1_a, self.theta_2_a, self.theta_3_a, self.l_6_a = 0, 0, 0, 0, 0
-
-    def __str__(self):
-        return ((
-            f"d1 = {self.d_1}, theta1 = {self.theta_1}, theta2 = {self.theta_2}, theta3 = {self.theta_3}, l_6 = {self.l_6}\n"
-            f"d1 v = {self.d_1_v}, theta1 v = {self.theta_1_v}, theta2 v = {self.theta_2_v}, theta3 v = {self.theta_3_v}, l_6 v = {self.l_6_v}\n"
-            f"d1 a = {self.d_1_a}, theta1 a = {self.theta_1_a}, theta2 a = {self.theta_2_a}, theta3 a = {self.theta_3_a}, l_6 a = {self.l_6_a}")
-        )

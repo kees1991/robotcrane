@@ -47,7 +47,6 @@ export class Communicator {
             };
 
             wsClient.onmessage = (event) => {
-                console.log("Message received: " + event.data);
                 resolve(wsClient);
                 if (event.data.includes("Exception")) {
                     this.exception = event.data
