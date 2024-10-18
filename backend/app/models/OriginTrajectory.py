@@ -54,14 +54,9 @@ class OriginTrajectory(object):
         return self.calculate_next_step(t)
 
     def calculate_next_step(self, t: float) -> Tuple[float, float, float, float]:
-        a_0_org_x, a_1_org_x, a_2_org_x, a_3_org_x = self.x_coefficients
-        a_0_org_y, a_1_org_y, a_2_org_y, a_3_org_y = self.y_coefficients
-        a_0_org_z, a_1_org_z, a_2_org_z, a_3_org_z = self.z_coefficients
-        a_0_org_phi, a_1_org_phi, a_2_org_phi, a_3_org_phi = self.phi_coefficients
-
-        org_x = calculate_position(a_0_org_x, a_1_org_x, a_2_org_x, a_3_org_x, t)
-        org_y = calculate_position(a_0_org_y, a_1_org_y, a_2_org_y, a_3_org_y, t)
-        org_z = calculate_position(a_0_org_z, a_1_org_z, a_2_org_z, a_3_org_z, t)
-        org_phi = calculate_position(a_0_org_phi, a_1_org_phi, a_2_org_phi, a_3_org_phi, t)
+        org_x = calculate_position(*self.x_coefficients, t)
+        org_y = calculate_position(*self.y_coefficients, t)
+        org_z = calculate_position(*self.z_coefficients, t)
+        org_phi = calculate_position(*self.y_coefficients, t)
 
         return org_x, org_y, org_z, org_phi

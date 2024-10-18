@@ -21,6 +21,15 @@ def get_coefficients_nonzero_v_and_a(t0: float, t1: float, v0: float, t_end: flo
     return a_0, a_1, a_2, a_3
 
 
+def calculate_position_velocity_acceleration(a_0: float, a_1: float, a_2: float, a_3: float, t: float) -> \
+        Tuple[float, float, float]:
+    position = calculate_position(a_0, a_1, a_2, a_3, t)
+    velocity = calculate_velocity(a_0, a_1, a_2, t)
+    acceleration = calculate_acceleration(a_0, a_1, t)
+
+    return position, velocity, acceleration
+
+
 def calculate_position(a_0: float, a_1: float, a_2: float, a_3: float, t: float) -> float:
     """Calculate position at time t"""
     return a_0 + a_1 * t + a_2 * t ** 2 + a_3 * t ** 3
