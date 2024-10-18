@@ -55,7 +55,6 @@ def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, ori
     if next_origin is None:
         print("No next origin found, end streaming.")
         return False
-    robot.set_origin_t_1(next_origin) #TODO remove and tune PID controller?
 
     # Update robot actuator states
     next_act_state = simulator.next_step(elapsed_time_in_seconds, origin_trajectory.get_moving_time(), next_origin)

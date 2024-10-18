@@ -7,16 +7,18 @@ class ControlSimulator(object):
     """Simulating the origin sensor signal and the control loop"""
 
     def __init__(self, robot: RobotCrane):
-        self.origin_sensor_frequency = 20
+        self.origin_sensor_frequency = 50
         self.time_of_last_sensor_signal = 0
-        self.control_frequency = 20
+        self.control_frequency = 30
         self.time_of_last_control_signal = 0
 
         self.robot = robot
         self.robot.set_act_states_t_1(self.robot.act_states_t_0)
 
-        kp, ki, kd = 0.3, 0.74, 0.001
-        self.d1_controller = SimpleController(kp=kp, ki=ki, kd=kd, control_frequency=self.control_frequency,
+        # Since there are no external influences, we can keep ki zero
+        # Ki is set to reach the desired state quickly, but without too many oscillations
+        kp, ki, kd = 0.75, 0, 0.012
+        self.d1_controller = SimpleController(kp=1, ki=0, kd=0.01, control_frequency=self.control_frequency,
                                               max_velocity=robot.max_vel)
         self.t1_controller = SimpleController(kp=kp, ki=ki, kd=kd, control_frequency=self.control_frequency,
                                               max_velocity=robot.max_ang_vel)
