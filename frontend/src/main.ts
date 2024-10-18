@@ -33,7 +33,7 @@ document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 let communicator = new Communicator();
 
-communicator.nextPose()
+communicator.getPose()
 const animateInit = () => {
     let id = requestAnimationFrame( animateInit );
 

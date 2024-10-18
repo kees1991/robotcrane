@@ -1,14 +1,15 @@
-export interface Position {
+export class Position {
     x: number;
     y: number;
     z: number;
     phi: number;
     doOpenGripper: boolean;
-}
 
-export interface OriginPosition {
-    x: number;
-    y: number;
-    z: number;
-    phi: number;
+    constructor(x: number, y: number, z: number, phi: number, doOpenGripper: boolean) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.phi = phi;
+        this.doOpenGripper = doOpenGripper;
+    }
 }

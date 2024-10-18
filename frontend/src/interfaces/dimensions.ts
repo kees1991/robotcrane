@@ -1,19 +1,17 @@
 export class Dimensions {
-    l_1: number;
-    l_2: number;
-    l_3: number;
-    d_4: number;
-    l_5: number;
-    l_7: number;
+    l1: number;
+    l2: number;
+    l3: number;
+    d4: number;
+    l5: number;
+    l7: number;
 
-    constructor(jsonString : string) {
-        const json = JSON.parse(jsonString);
-
-        this.l_1 = json['l_1'];
-        this.l_2 = json['l_2'];
-        this.l_3 = json['l_3'];
-        this.d_4 = -json['d_4'];
-        this.l_5 = json['l_5'];
-        this.l_7 = json['l_7'];
+    constructor(l1: number, l2: number, l3: number, d4: number, l5: number, l7: number) {
+        this.l1 = l1;
+        this.l2 = l2;
+        this.l3 = l3;
+        this.d4 = d4;
+        this.l5 = l5;
+        this.l7 = l7;
     }
 }

@@ -1,8 +1,10 @@
 import * as THREE from 'three'
-import {ActuatorStates} from "../interfaces/actuatorstates";
-import {Pose} from "../interfaces/pose.js";
-import {OriginPosition, Position} from "../interfaces/position";
-import {Dimensions} from "../interfaces/dimensions.js";
+import { ActuatorStates } from "../interfaces/actuatorstates";
+import { Pose } from "../interfaces/pose.js";
+import { Position } from "../interfaces/position";
+import { OriginPosition } from "../interfaces/origin-positions";
+import { Dimensions } from "../interfaces/dimensions.js";
+import {Message} from "../interfaces/message";
 
 export class Communicator {
     promise: Promise<any>;
@@ -16,7 +18,9 @@ export class Communicator {
         this.promise = this.newClientPromise;
 
         this.areDimensionsInitialized = true;
+        // @ts-ignore
         this.dimensions = {l_1: 1.0, l_2: 0.4, l_3: 0.4, d_4: 0.2, l_5: 0.1, l_7: 0.1};
+        // TODO fix this?
 
         this.pose = {
             j_1: new THREE.Vector3(0.0, 0.0, 0.0),
@@ -55,7 +59,8 @@ export class Communicator {
                     this.exception = event.data
                 }
                 if (event.data.includes("l_1")) {
-                    this.dimensions = new Dimensions(event.data)
+                    const json = JSON.parse(event.data)
+                    this.dimensions = new Dimensions(json['l_1'],json['l_2'],json['l_3'],-json['d_4'], json['l_5'], json['l_7'])
                     this.areDimensionsInitialized = true
                 }
                 if (event.data.includes("j_1")) {
@@ -68,11 +73,6 @@ export class Communicator {
         })
     }
 
-    private createMessage(action: string) {
-        let message: Message = {action: action};
-        return "{\"action\": \"" + message.action + "\"}";
-    }
-
     private sendMessage(messageString: string) {
         this.promise
             .then(wsClient => {
@@ -83,61 +83,40 @@ export class Communicator {
     }
 
     resetRobot = () => {
-        let messageString = this.createMessage("reset_robot");
-        this.sendMessage(messageString);
+        let message: Message = new Message("reset_robot");
+        this.sendMessage(message.toJsonString());
     }
 
-    setActuatorStates = (d_1:number, theta_1:number, theta_2:number, theta_3:number, l_6:number) => {
-        let message: Message = { action: "set_actuator_states"};
-        let actuatorStates: ActuatorStates = { d_1: d_1, theta_1: theta_1, theta_2: theta_2, theta_3: theta_3, l_6: l_6};
-        let actStatesJson = JSON.stringify(actuatorStates)
-
-        let messageString = "{\"action\": \"" + message.action + "\", \"actuator_states\":" + actStatesJson + "}";
-
-        this.sendMessage(messageString);
+    getPose = () => {
+        let message: Message = new Message("get_pose");
+        this.sendMessage(message.toJsonString());
     }
 
-    setEndEffectorPosition = (x : number, y: number, z: number, phi: number, doOpenGripper: boolean) => {
-        let message: Message = { action: "set_end_effector"};
-        let position: Position = { x: x, y: y, z: z, phi: phi, doOpenGripper: doOpenGripper};
-        let positionJson = JSON.stringify(position)
+    moveActuators = (d1: number, theta1: number, theta2: number, theta3: number, l6: number) => {
+        let actuatorStates: ActuatorStates = new ActuatorStates(d1, theta1, theta2, theta3, l6);
 
-        let messageString = "{\"action\": \"" + message.action + "\", \"end_effector_position\":" + positionJson + "}";
+        let message: Message = new Message("move_actuators", actuatorStates);
+        this.sendMessage(message.toJsonString());
+    }
 
-        this.sendMessage(messageString);
+    moveEndEffector = (x : number, y: number, z: number, phi: number, doOpenGripper: boolean) => {
+        let position: Position = new Position(x, y, z, phi, doOpenGripper);
+
+        let message: Message = new Message("move_end_effector", position);
+        this.sendMessage(message.toJsonString());
     }
 
     moveOrigin = (x : number, y: number, z: number, phi: number) => {
-        let message: Message = { action: "set_origin"};
-        let position: OriginPosition = { x: x, y: y, z: z, phi: phi};
-        let positionJson = JSON.stringify(position)
+        let position: OriginPosition = new OriginPosition(x, y, z, phi);
 
-        let messageString = "{\"action\": \"" + message.action + "\", \"origin_position\":" + positionJson + "}";
-
-        this.sendMessage(messageString);
+        let message: Message = new Message("move_origin", position);
+        this.sendMessage(message.toJsonString());
     }
 
-    nextPose = () => {
-        let messageString = this.createMessage("get_pose");
-        this.sendMessage(messageString);
-    }
+    moveOriginControlEndEffector = (x : number, y: number, z: number, phi: number) => {
+        let position: OriginPosition = new OriginPosition(x, y, z, phi);
 
-    streamPoses = () => {
-        let messageString = this.createMessage("stream_poses");
-        this.sendMessage(messageString);
+        let message: Message = new Message("move_origin_control_end_effector", position);
+        this.sendMessage(message.toJsonString());
     }
-
-    streamPosesNewOrg = () => {
-        let messageString = this.createMessage("stream_poses_for_new_origin");
-        this.sendMessage(messageString);
-    }
-
-    streamPosesControlNewOrg = () => {
-        let messageString = this.createMessage("stream_poses_for_new_origin_and_control_end_effector");
-        this.sendMessage(messageString);
-    }
-}
-
-interface Message {
-    action: string;
 }

@@ -8,7 +8,8 @@ from starlette.templating import Jinja2Templates
 
 from backend.app.models.RobotCrane import RobotCrane
 from backend.app.services.RobotPoseStreamer import RobotPoseStreamer
-from backend.app.services.tools.RobotUpdateHelper import set_actuator_states, set_end_effectors, set_new_origin, get_pose
+from backend.app.services.tools.RobotUpdateHelper import set_actuator_states, set_end_effectors, set_new_origin, \
+    get_pose
 from backend.app.views.RobotTask import RobotTask
 from backend.app.views.WebSocketAPI import WebSocketAPI
 
@@ -61,31 +62,27 @@ async def process_request(robot: RobotCrane, websocket: WebSocket):
                 robot = RobotCrane()
                 await websocket_api.send_message(websocket, "True")
 
-            case RobotTask.set_actuator_states:
-                is_done = set_actuator_states(robot, json_data["actuator_states"])
-                await websocket_api.send_message(websocket, is_done)
-
-            case RobotTask.set_end_effector:
-                is_done = set_end_effectors(robot, json_data["end_effector_position"])
-                await websocket_api.send_message(websocket, is_done)
-
-            case RobotTask.set_origin:
-                is_done = set_new_origin(robot, json_data["origin_position"])
-                await websocket_api.send_message(websocket, is_done)
-
             case RobotTask.get_pose:
                 pose = get_pose(robot)
                 await websocket_api.send_message(websocket, pose)
 
-            case RobotTask.stream_poses:
+            case RobotTask.move_actuators:
+                set_actuator_states(robot, json_data["data"])
                 streamer = RobotPoseStreamer(websocket, websocket_api)
                 await streamer.stream_poses(robot)
 
-            case RobotTask.stream_poses_for_new_origin:
+            case RobotTask.move_end_effector:
+                set_end_effectors(robot, json_data["data"])
+                streamer = RobotPoseStreamer(websocket, websocket_api)
+                await streamer.stream_poses(robot)
+
+            case RobotTask.move_origin:
+                set_new_origin(robot, json_data["data"])
                 streamer = RobotPoseStreamer(websocket, websocket_api)
                 await streamer.stream_poses_for_new_origin(robot)
 
-            case RobotTask.stream_poses_for_new_origin_and_control_end_effector:
+            case RobotTask.move_origin_control_end_effector:
+                set_new_origin(robot, json_data["data"])
                 streamer = RobotPoseStreamer(websocket, websocket_api)
                 await streamer.stream_poses_for_new_origin_and_control_end_effector(robot)
 
