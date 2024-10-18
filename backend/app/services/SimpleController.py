@@ -1,9 +1,9 @@
 class SimpleController(object):
     """Controller to create a control signal for the robot"""
 
-    def __init__(self, kp=1, ki=0, kd=0, control_frequency=20, max_velocity=1):
-        self.max_signal = max_velocity/control_frequency
-        self.sample_rate = 1/control_frequency
+    def __init__(self, kp, ki, kd, control_frequency, max_velocity):
+        self.max_signal = max_velocity / control_frequency
+        self.sample_rate = 1 / control_frequency
         self.kp = kp
         self.kd = kd
         self.ki = ki
@@ -15,8 +15,7 @@ class SimpleController(object):
         self.signal = 0
 
         self.total_error = 0
-        self.uncapped_signal_list = [0]
-        self.signal_list = [0]
+        self.signal_list = []
 
     def set_target(self, target):
         self.error_sum = 0
@@ -32,9 +31,7 @@ class SimpleController(object):
 
         # Calculate controller signal
         self.signal = self.kp * error + self.ki * self.error_sum + self.kd * (
-                    actual_value - self.last_reading) / self.sample_rate
-
-        self.uncapped_signal_list.append(self.signal)
+                actual_value - self.last_reading) / self.sample_rate
 
         # Cap signal based on max velocity
         if self.signal > self.max_signal:
@@ -42,12 +39,8 @@ class SimpleController(object):
         elif self.signal < -self.max_signal:
             self.signal = -self.max_signal
 
-        self.signal_list.append(self.signal)
+        # Update total error
         self.total_error += abs(error)
 
         # Store last value
         self.last_reading = actual_value
-
-    def update_signal_list(self):
-        self.uncapped_signal_list.append(self.signal)
-        self.signal_list.append(self.signal)

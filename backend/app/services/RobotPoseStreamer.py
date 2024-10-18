@@ -57,7 +57,7 @@ def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, ori
         return False
 
     # Update robot actuator states
-    next_act_state = simulator.next_step(elapsed_time_in_seconds, origin_trajectory.get_moving_time(), next_origin)
+    next_act_state = simulator.next_step(elapsed_time_in_seconds, next_origin)
     if next_act_state is None:
         print("No next actuator state found, end streaming.")
         return False
@@ -97,7 +97,7 @@ class RobotPoseStreamer(object):
         org_traj = OriginTrajectory(robot.origin_t_0, new_org)
         print(f"Moving time: {org_traj.get_moving_time()}")
 
-        simulator = ControlSimulator(robot)
+        simulator = ControlSimulator(robot, org_traj.get_moving_time())
 
         await self.stream(robot, org_traj, simulator, update_robot_with_new_origin_and_control_end_effector)
 
