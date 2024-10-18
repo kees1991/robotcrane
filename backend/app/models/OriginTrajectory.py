@@ -18,7 +18,7 @@ class OriginTrajectory(object):
         self.next_origin = None
         self.org_time_series = None
 
-        self.mov_time = self.min_move_time
+        self.__moving_time = self.min_move_time
 
     @property
     def min_move_time(self) -> float:
@@ -46,8 +46,11 @@ class OriginTrajectory(object):
     def phi_coefficients(self) -> Tuple[float, float, float, float]:
         return get_coefficients_nonzero_v_and_a(self.origin_t_0[3], self.origin_t_1[3], 0, self.min_move_time)
 
+    def get_moving_time(self) -> float:
+        return self.__moving_time
+
     def origin_next_step(self, t):
-        if t >= self.mov_time:
+        if t >= self.__moving_time:
             return None
 
         org_x, org_y, org_z, org_phi = self.calculate_next_step(t)

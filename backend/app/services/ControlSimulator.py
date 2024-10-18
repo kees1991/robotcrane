@@ -1,12 +1,12 @@
 from backend.app.models.ActuatorStates import ActuatorStates
-from backend.app.models.OriginTrajectory import OriginTrajectory
+from backend.app.models.RobotCrane import RobotCrane
 from backend.app.services.SimpleController import SimpleController
 
 
 class ControlSimulator(object):
     """Simulating the origin sensor signal and the control loop"""
 
-    def __init__(self, robot):
+    def __init__(self, robot: RobotCrane):
         self.origin_sensor_frequency = 20
         self.time_of_last_sensor_signal = 0
         self.control_frequency = 20
@@ -14,13 +14,6 @@ class ControlSimulator(object):
 
         self.robot = robot
         self.robot.set_act_states_t_1(self.robot.act_states_t_0)
-
-        self.new_org = self.robot.origin_t_1
-        self.robot.set_origin_t_1(self.robot.origin_t_0)
-
-        self.org_traj = OriginTrajectory(robot.origin_t_0, self.new_org)
-        self.duration = self.org_traj.mov_time
-        print(f"Moving time: {self.org_traj.mov_time}")
 
         kp, ki, kd = 0.3, 0.74, 0.001
         self.d1_controller = SimpleController(kp=kp, ki=ki, kd=kd, control_frequency=self.control_frequency,
@@ -49,18 +42,14 @@ class ControlSimulator(object):
         self.t2_controller.set_target(desired_act_state.theta_2)
         self.t3_controller.set_target(desired_act_state.theta_3)
 
-    def origin_next_step(self, t):
-        return self.org_traj.origin_next_step(t)
-
-    def next_step(self, t):
-        if t > self.duration:
+    def next_step(self, t: float, duration: float, next_origin: tuple) -> None | ActuatorStates:
+        if t > duration:
             return None
 
         # Simulate origin sensor
         if t - self.time_of_last_sensor_signal >= (1/self.origin_sensor_frequency):
             self.time_of_last_sensor_signal = t
 
-            next_origin = self.org_traj.origin_next_step(t)
             if next_origin is None:
                 return None
 
@@ -93,13 +82,12 @@ class ControlSimulator(object):
                                         self.robot.act_states_t_1.theta_3 + self.t3_controller.signal,
                                         self.robot.act_states_t_1.l_6)
 
-        self.robot.set_act_states_t_1(new_act_states)
         self.act_states_list.append(new_act_states)
 
         self.add_metrics_for_plotting(self.robot, self.x_d, self.y_d, self.z_d)
         return new_act_states
 
-    def add_metrics_for_plotting(self, robot, x_d, y_d, z_d):
+    def add_metrics_for_plotting(self, robot: RobotCrane, x_d: float, y_d: float, z_d: float) -> None:
         self.x_targets.append(x_d)
         self.y_targets.append(y_d)
         self.z_targets.append(z_d)

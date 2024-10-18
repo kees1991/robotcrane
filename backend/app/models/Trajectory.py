@@ -17,10 +17,7 @@ class Trajectory(object):
         self.max_ang_vel = robot.max_ang_vel
         self.max_ang_acc = robot.max_ang_acc
 
-        self.mov_time = self.min_move_time
-
-    def set_mov_time(self, mov_time: float) -> None:
-        self.mov_time = mov_time
+        self.__moving_time = self.min_move_time
 
     @property
     def min_move_time(self) -> float:
@@ -34,26 +31,32 @@ class Trajectory(object):
 
     @property
     def d_1_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.d_1, self.act_states_t_1.d_1, self.act_states_t_0.d_1_v, self.mov_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.d_1, self.act_states_t_1.d_1, self.act_states_t_0.d_1_v, self.__moving_time)
 
     @property
     def theta_1_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_1, self.act_states_t_1.theta_1, self.act_states_t_0.theta_1_v, self.mov_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_1, self.act_states_t_1.theta_1, self.act_states_t_0.theta_1_v, self.__moving_time)
 
     @property
     def theta_2_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_2, self.act_states_t_1.theta_2, self.act_states_t_0.theta_2_v, self.mov_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_2, self.act_states_t_1.theta_2, self.act_states_t_0.theta_2_v, self.__moving_time)
 
     @property
     def theta_3_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_3, self.act_states_t_1.theta_3, self.act_states_t_0.theta_3_v, self.mov_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_3, self.act_states_t_1.theta_3, self.act_states_t_0.theta_3_v, self.__moving_time)
 
     @property
     def l_6_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.l_6, self.act_states_t_1.l_6, self.act_states_t_0.l_6_v, self.mov_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.l_6, self.act_states_t_1.l_6, self.act_states_t_0.l_6_v, self.__moving_time)
+
+    def set_moving_time(self, time: float) -> None:
+        self.__moving_time = time
+
+    def get_moving_time(self) -> float:
+        return self.__moving_time
 
     def next_step(self, t: float) -> ActuatorStates | None:
-        if t >= self.mov_time:
+        if t >= self.__moving_time:
             return None
 
         return self.calculate_next_step(t)

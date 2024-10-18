@@ -47,17 +47,18 @@ def update_robot_with_new_origin(robot: RobotCrane, origin_trajectory: OriginTra
     return True
 
 
-def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, _, simulator: ControlSimulator,
+def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, origin_trajectory: OriginTrajectory,
+                                                          simulator: ControlSimulator,
                                                           elapsed_time_in_seconds: float) -> bool:
-    # Update robot origin
-    next_origin = simulator.origin_next_step(elapsed_time_in_seconds)
+    # Get the next origin
+    next_origin = origin_trajectory.origin_next_step(elapsed_time_in_seconds)
     if next_origin is None:
         print("No next origin found, end streaming.")
         return False
-    robot.set_origin_t_1(next_origin)
+    robot.set_origin_t_1(next_origin) #TODO remove and tune PID controller?
 
     # Update robot actuator states
-    next_act_state = simulator.next_step(elapsed_time_in_seconds)
+    next_act_state = simulator.next_step(elapsed_time_in_seconds, origin_trajectory.get_moving_time(), next_origin)
     if next_act_state is None:
         print("No next actuator state found, end streaming.")
         return False
@@ -76,7 +77,7 @@ class RobotPoseStreamer(object):
 
     async def stream_poses(self, robot: RobotCrane) -> None:
         trajectory = Trajectory(robot)
-        print(f"Moving time: {trajectory.mov_time}")
+        print(f"Moving time: {trajectory.get_moving_time()}")
 
         await self.stream(robot, None, trajectory, update_robot)
 
@@ -84,17 +85,22 @@ class RobotPoseStreamer(object):
         origin_trajectory = OriginTrajectory(robot.origin_t_0, robot.origin_t_1)
 
         trajectory = Trajectory(robot)
-        trajectory.set_mov_time(origin_trajectory.min_move_time)
+        trajectory.set_moving_time(origin_trajectory.min_move_time)
 
-        print(f"Moving time: {trajectory.mov_time}")
+        print(f"Moving time: {trajectory.get_moving_time()}")
 
         await self.stream(robot, origin_trajectory, trajectory, update_robot_with_new_origin)
 
     async def stream_poses_for_new_origin_and_control_end_effector(self, robot: RobotCrane) -> None:
-        # TODO instantiate OriginTrajectory before Controller and pass it to the update function?
+        new_org = robot.origin_t_1
+        robot.set_origin_t_1(robot.origin_t_0)
+
+        org_traj = OriginTrajectory(robot.origin_t_0, new_org)
+        print(f"Moving time: {org_traj.get_moving_time()}")
+
         simulator = ControlSimulator(robot)
 
-        await self.stream(robot, None, simulator, update_robot_with_new_origin_and_control_end_effector)
+        await self.stream(robot, org_traj, simulator, update_robot_with_new_origin_and_control_end_effector)
 
     async def stream(self, robot: RobotCrane, origin_next_step_provider, next_step_provider, update_function) -> None:
 
