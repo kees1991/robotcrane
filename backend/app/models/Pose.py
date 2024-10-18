@@ -7,27 +7,24 @@ def convert_to_xyz_tuple(frame):
 
 
 class Pose(object):
-    """Defining the robot pose including the origin"""
+    """
+    Defining the robot pose including the origin for rendering it on the frontend
+    The pose is represented by the xyz coordinates of all the joints and the rotation angles
+    """
 
-    def __init__(self, robot):
-        self.org = (0.0, 0.0, 0.0)
+    def __init__(self, robot_frames, origin_t_1, act_states_t_1):
+        self.j_1 = convert_to_xyz_tuple(robot_frames[0])
+        self.j_2 = convert_to_xyz_tuple(robot_frames[1])
+        self.j_3 = convert_to_xyz_tuple(robot_frames[2])
+        self.j_4 = convert_to_xyz_tuple(robot_frames[3])
+        self.j_5 = convert_to_xyz_tuple(robot_frames[4])
+        self.j_6 = convert_to_xyz_tuple(robot_frames[5])
+        self.j_7 = convert_to_xyz_tuple(robot_frames[6])
 
-        frames = robot.get_frames()
-        self.j_1 = convert_to_xyz_tuple(frames[0])
-        self.j_2 = convert_to_xyz_tuple(frames[1])
-        self.j_3 = convert_to_xyz_tuple(frames[2])
-        self.j_4 = convert_to_xyz_tuple(frames[3])
-        self.j_5 = convert_to_xyz_tuple(frames[4])
-        self.j_6 = convert_to_xyz_tuple(frames[5])
-        self.j_7 = convert_to_xyz_tuple(frames[6])
-        if robot.origin_t_1 is not None:
-            self.theta_0 = robot.origin_t_1[3]
-        else:
-            self.theta_0 = robot.origin_t_0[3]
-
-        self.theta_1 = robot.act_states_t_1.theta_1
-        self.theta_2 = robot.act_states_t_1.theta_2
-        self.theta_3 = robot.act_states_t_1.theta_3
+        self.theta_0 = origin_t_1[3]
+        self.theta_1 = act_states_t_1.theta_1
+        self.theta_2 = act_states_t_1.theta_2
+        self.theta_3 = act_states_t_1.theta_3
 
     def to_json(self):
         pose_json = {

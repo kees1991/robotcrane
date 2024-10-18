@@ -17,5 +17,8 @@ class WebSocketAPI:
 
         print(f"Disconnected")
 
-    async def send_message(self, message: str, websocket: WebSocket):
+    async def receive_message(self, websocket: WebSocket) -> str:
+        return await websocket.receive_text()
+
+    async def send_message(self, websocket: WebSocket, message: str):
         await websocket.send_text(message)

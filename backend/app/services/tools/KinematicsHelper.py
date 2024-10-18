@@ -54,9 +54,9 @@ def calculate_state_frames(size, t_matrices):
     return fs
 
 
-def calculate_origin_translation_matrix(new_origin):
-    """Calculate the translation matrix for a new origin"""
-    x, y, z, phi = new_origin[0], new_origin[1], new_origin[2], new_origin[3]
+def calculate_origin_translation_matrix(origin):
+    """Calculate the translation matrix for an origin"""
+    x, y, z, phi = origin[0], origin[1], origin[2], origin[3]
     return np.array(
         [
             [np.cos(phi), np.sin(phi), 0., -x],

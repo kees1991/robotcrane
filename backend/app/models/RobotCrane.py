@@ -1,3 +1,5 @@
+import numpy as np
+
 from backend.app.models.ActuatorStates import ActuatorStates
 from backend.app.services.tools.KinematicsHelper import *
 
@@ -6,20 +8,19 @@ class RobotCrane(object):
 
     def __init__(self):
         # Robot dimensions
-        self.l_1 = 1  # base column length
-        self.l_2 = 0.4  # upper arm length
-        self.l_3 = 0.4  # lower arm length
-        self.d_4 = -0.2  # wrist extension length
-        self.l_5 = 0.1  # gripper length
-        self.l_7 = 0.1  # maximum jaw extension length
+        self.__l_1 = 1  # base column length
+        self.__l_2 = 0.4  # upper arm length
+        self.__l_3 = 0.4  # lower arm length
+        self.__d_4 = -0.2  # wrist extension length
+        self.__l_5 = 0.1  # gripper length
+        self.__l_7 = 0.1  # maximum jaw extension length
 
-        # Max positions
-        self.min_angle = np.deg2rad(-360)
-        self.max_angle = np.deg2rad(360)
-        self.min_theta_2 = np.deg2rad(-150)
-        self.max_theta_2 = np.deg2rad(150)
+        # Robot limits (maximum positions, velocities, and accelerations)
+        self.__min_angle = np.deg2rad(-360)
+        self.__max_angle = np.deg2rad(360)
+        self.__min_theta_2 = np.deg2rad(-150)
+        self.__max_theta_2 = np.deg2rad(150)
 
-        # Max velocity and max acceleration
         self.max_vel = 0.7
         self.max_acc = 0.7
         self.max_ang_vel = 0.7
@@ -29,85 +30,83 @@ class RobotCrane(object):
         self.origin_t_0 = (0, 0, 0, np.deg2rad(0))
         self.origin_t_1 = (0, 0, 0, np.deg2rad(0))
 
-        # Origin translation matrix
-        self.T_origin = np.identity(4)
-
         # Initial pose and next pose
         self.act_states_t_0 = ActuatorStates(0.7, np.deg2rad(0), np.deg2rad(0), np.deg2rad(0), 0.1)
         self.act_states_t_1 = ActuatorStates(0.7, np.deg2rad(0), np.deg2rad(0), np.deg2rad(0), 0.1)
 
     @property
-    def denavit_hartenberg_parameters(self):
-        return calculate_dh_parameters(self.l_2, self.l_3, self.d_4, self.l_5, self.act_states_t_1)
+    def denavit_hartenberg_parameters(self) -> np.ndarray:
+        return calculate_dh_parameters(self.__l_2, self.__l_3, self.__d_4, self.__l_5, self.act_states_t_1)
 
     @property
-    def transformation_matrices(self):
-        return calculate_transformation_matrices(self.denavit_hartenberg_parameters, self.T_origin)
+    def transformation_matrices(self) -> np.ndarray:
+        return calculate_transformation_matrices(self.denavit_hartenberg_parameters, self.origin_translation_matrix)
 
-    def set_act_states_t_0(self, act_states):
+    @property
+    def origin_translation_matrix(self) -> np.ndarray:
+        return calculate_origin_translation_matrix(self.origin_t_1)
+
+    def set_origin_t_1(self, origin: tuple) -> None:
+        self.origin_t_1 = origin
+
+    def set_act_states_t_0(self, act_states: ActuatorStates) -> None:
         self.act_states_t_0 = act_states
 
-    def set_act_states_t_1(self, act_states):
+    def set_act_states_t_1(self, act_states: ActuatorStates) -> None:
         self.validate_act_states(act_states)
         self.act_states_t_1 = act_states
 
-    def validate_act_states(self, act_states):
+    def validate_act_states(self, act_states: ActuatorStates) -> None:
         """Validate actuator states according to robot dimensions"""
 
         # Lift height should not be greater than base column length
         # or smaller than the wrist extensions
-        if not (abs(self.d_4) <= act_states.d_1 <= self.l_1):
+        if not (abs(self.__d_4) <= act_states.d_1 <= self.__l_1):
             raise ValueError("Position out of reach: D1 is out of bounds")
 
         # Swing angle should not be greater than +- 360 degrees
-        if not (self.min_angle <= act_states.theta_1 <= self.max_angle):
+        if not (self.__min_angle <= act_states.theta_1 <= self.__max_angle):
             raise ValueError("Position out of reach: Theta 1 is out of bounds")
 
         # Elbow angle should not be greater than +- 150 degrees,
         # to avoid the lower arm clashing with the upper arm
-        if not (self.min_theta_2 <= act_states.theta_2 <= self.max_theta_2):
+        if not (self.__min_theta_2 <= act_states.theta_2 <= self.__max_theta_2):
             raise ValueError("Position out of reach: Theta 2 is out of bounds")
 
         # Wrist angle should not be greater than +- 360 degrees
-        if not (self.min_angle <= act_states.theta_1 <= self.max_angle):
+        if not (self.__min_angle <= act_states.theta_1 <= self.__max_angle):
             raise ValueError("Position out of reach: Theta 3 is out of bounds")
 
         # Jaw extensions should not be greater than the max jaw extensions
-        if not (-self.l_7 <= act_states.l_6 <= self.l_7):
+        if not (-self.__l_7 <= act_states.l_6 <= self.__l_7):
             raise ValueError("Position out of reach: L6 is out of bounds")
 
-    def get_x_position(self):
+    def get_x_position(self) -> float:
         """Get the x position of the robot end effector"""
-        return self.get_frames()[-1][0][3]
+        return self.get_frames()[-1][0][3].item()
 
-    def get_y_position(self):
+    def get_y_position(self) -> float:
         """Get the y position of the robot end effector"""
-        return self.get_frames()[-1][1][3]
+        return self.get_frames()[-1][1][3].item()
 
-    def get_z_position(self):
+    def get_z_position(self) -> float:
         """Get the z position of the robot end effector"""
-        return self.get_frames()[-1][2][3]
+        return self.get_frames()[-1][2][3].item()
 
-    def get_phi(self):
+    def get_phi(self) -> float:
         """Get the rotation of the robot end effector"""
         return self.origin_t_1[3] + self.act_states_t_1.theta_1 + self.act_states_t_1.theta_2 + self.act_states_t_1.theta_3
 
-    def get_frames(self):
+    def get_frames(self) -> np.ndarray:
         """Get the robot state frames"""
         return np.around(calculate_state_frames(len(self.denavit_hartenberg_parameters), self.transformation_matrices), 5)
 
-    def inverse_kinematics(self, x, y, z, phi, do_open_gripper=True):
+    def inverse_kinematics(self, x: float, y: float, z: float, phi: float, do_open_gripper=True) -> ActuatorStates:
         """Robot inverse kinematics, including origin translation"""
 
-        phi, x, y, z = translate_desired_end_effector_state_for_new_origin(self.T_origin, self.origin_t_1, phi, x, y, z)
+        phi, x, y, z = translate_desired_end_effector_state_for_new_origin(self.origin_translation_matrix, self.origin_t_1, phi, x, y, z)
 
         d_1, theta_1, theta_2, theta_3, l_6 = calculate_inverse_kinematics(
-            self.l_2, self.l_3, self.d_4, self.l_5, do_open_gripper, phi, x, y, z)
+            self.__l_2, self.__l_3, self.__d_4, self.__l_5, do_open_gripper, phi, x, y, z)
 
         return ActuatorStates(d_1, theta_1, theta_2, theta_3, l_6)
-
-    def set_new_origin(self, new_origin):
-        """Set new origin and update the origin translation matrix"""
-        self.origin_t_1 = new_origin
-
-        self.T_origin = calculate_origin_translation_matrix(new_origin)
