@@ -87,7 +87,7 @@ async def process_request(robot: RobotCrane, websocket: WebSocket):
 
             case RobotTask.stream_poses_for_new_origin_and_control_end_effector:
                 streamer = RobotPoseStreamer(websocket, websocket_api)
-                await streamer.stream_poses_for_new_origin_and_control_end_effector(robot)
+                await streamer.stream_poses_for_new_origin_and_control_end_effector2(robot)
 
             case _:
                 raise ValueError("Invalid action")

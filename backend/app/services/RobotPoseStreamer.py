@@ -8,6 +8,7 @@ from backend.app.models.Pose import Pose
 from backend.app.models.RobotCrane import RobotCrane
 from backend.app.models.Trajectory import Trajectory
 from backend.app.services.ControlSimulator import ControlSimulator
+from backend.app.services.ControlSimulator2 import ControlSimulator2
 from backend.app.views.WebSocketAPI import WebSocketAPI
 
 
@@ -66,10 +67,28 @@ def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, ori
     return True
 
 
+def update_robot_with_new_origin_and_control_end_effector2(robot: RobotCrane, origin_trajectory: OriginTrajectory,
+                                                           simulator: ControlSimulator2,
+                                                           elapsed_time_in_seconds: float) -> bool:
+    # Get the next origin
+    next_origin = origin_trajectory.origin_next_step(elapsed_time_in_seconds)
+    if next_origin is None:
+        print("No next origin found, end streaming.")
+        return False
+
+    # Update robot actuator states
+    robot = simulator.next_step(robot, elapsed_time_in_seconds, next_origin)
+    if robot is None:
+        print("No next step found, end streaming.")
+        return False
+
+    return True
+
+
 class RobotPoseStreamer(object):
 
     def __init__(self, websocket: WebSocket, websocket_api: WebSocketAPI):
-        self.streaming_frequency = 20
+        self.streaming_frequency = 50
         self.last_signal_time_ms = 0
         self.websocket = websocket
         self.websocket_api = websocket_api
@@ -100,6 +119,28 @@ class RobotPoseStreamer(object):
         simulator = ControlSimulator(robot, org_traj.get_moving_time())
 
         await self.stream(robot, org_traj, simulator, update_robot_with_new_origin_and_control_end_effector)
+
+    async def stream_poses_for_new_origin_and_control_end_effector2(self, robot: RobotCrane) -> None:
+        new_org = robot.origin_t_1
+        robot.set_origin_t_1(robot.origin_t_0)
+
+        org_traj = OriginTrajectory(robot.origin_t_0, new_org)
+        print(f"Moving time: {org_traj.get_moving_time()}")
+
+        # Set initial target for controllers
+        target_x = robot.get_x_position()
+        target_y = robot.get_y_position()
+        target_z = robot.get_z_position()
+        target_phi = robot.get_phi()
+
+        simulator = ControlSimulator2(org_traj.get_moving_time(), target_x, target_y, target_z, target_phi,
+                                      robot.max_vel,
+                                      robot.max_ang_vel)
+
+        initial_desired_act_state = robot.inverse_kinematics(target_x, target_y, target_z, target_phi)
+        simulator.update_controllers_with_actuator_states(initial_desired_act_state)
+
+        await self.stream(robot, org_traj, simulator, update_robot_with_new_origin_and_control_end_effector2)
 
     async def stream(self, robot: RobotCrane, origin_next_step_provider, next_step_provider, update_function) -> None:
 
