@@ -48,8 +48,8 @@ def update_robot_with_new_origin(robot: RobotCrane, origin_trajectory: OriginTra
 
 
 def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, origin_trajectory: OriginTrajectory,
-                                                           simulator: ControlSimulator,
-                                                           elapsed_time_in_seconds: float) -> bool:
+                                                          simulator: ControlSimulator,
+                                                          elapsed_time_in_seconds: float) -> bool:
     # Get the next origin
     next_origin = origin_trajectory.origin_next_step(elapsed_time_in_seconds)
     if next_origin is None:

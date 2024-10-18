@@ -1,5 +1,3 @@
-from typing import List
-
 from backend.app.services.tools.TrajectoryHelper import *
 
 

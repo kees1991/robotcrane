@@ -1,7 +1,7 @@
 class SimpleController(object):
     """Controller to create a control signal for the robot"""
 
-    def __init__(self, kp, ki, kd, control_frequency, max_velocity):
+    def __init__(self, kp: float, ki: float, kd: float, control_frequency: int, max_velocity: float):
         self.max_signal = max_velocity / control_frequency
         self.sample_rate = 1 / control_frequency
         self.kp = kp
@@ -17,11 +17,11 @@ class SimpleController(object):
         self.total_error = 0
         self.signal_list = []
 
-    def set_target(self, target):
+    def set_target(self, target: float) -> None:
         self.error_sum = 0
         self.target = target
 
-    def calculate_signal(self, actual_value):
+    def calculate_signal(self, actual_value: float) -> None:
         error = self.target - actual_value
 
         if self.last_reading is None:
