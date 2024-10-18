@@ -110,3 +110,6 @@ class RobotCrane(object):
             self.__l_2, self.__l_3, self.__d_4, self.__l_5, do_open_gripper, phi, x, y, z)
 
         return ActuatorStates(d_1, theta_1, theta_2, theta_3, l_6)
+
+    def reset_velocity_and_acceleration(self) -> None:
+        self.act_states_t_1.reset_vel_and_acc()

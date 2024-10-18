@@ -106,7 +106,6 @@ class RobotPoseStreamer(object):
         await self.stream(robot, org_traj, simulator, update_robot_with_new_origin_and_control_end_effector)
 
     async def stream(self, robot: RobotCrane, origin_next_step_provider, next_step_provider, update_function) -> None:
-
         start_time_ms = get_current_time_ms()
         while True:
             current_time_ms = get_current_time_ms()
@@ -131,6 +130,12 @@ class RobotPoseStreamer(object):
 
         # Reset last signal time
         self.last_signal_time_ms = 0
+
+        # Reset velocity and acceleration
+        robot.reset_velocity_and_acceleration()
+
+        # Preserve the robot origin
+        robot.origin_t_0 = robot.origin_t_1
 
     def should_update_pose(self, current_time_ms: int) -> bool:
         """Check if enough time has passed to update the pose."""

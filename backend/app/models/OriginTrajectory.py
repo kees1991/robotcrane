@@ -57,6 +57,6 @@ class OriginTrajectory(object):
         org_x = calculate_position(*self.x_coefficients, t)
         org_y = calculate_position(*self.y_coefficients, t)
         org_z = calculate_position(*self.z_coefficients, t)
-        org_phi = calculate_position(*self.y_coefficients, t)
+        org_phi = calculate_position(*self.phi_coefficients, t)
 
         return org_x, org_y, org_z, org_phi

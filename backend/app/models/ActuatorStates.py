@@ -31,6 +31,12 @@ class ActuatorStates(object):
     def get_states(self) -> Tuple[float, float, float, float, float]:
         return self.d_1, self.theta_1, self.theta_2, self.theta_3, self.l_6
 
-    def reset_vel_and_acc(self) -> None:
-        self.d_1_v, self.theta_1_v, self.theta_2_v, self.theta_3_v, self.l_6_v = 0, 0, 0, 0, 0
-        self.d_1_a, self.theta_1_a, self.theta_2_a, self.theta_3_a, self.l_6_a = 0, 0, 0, 0, 0
+    def reset_vel_and_acc(self):
+        self.d_1_v, self.theta_1_v, self.theta_2_v, self.theta_3_v, self.l_6_v = 0.0, 0.0, 0.0, 0.0, 0.0
+        self.d_1_a, self.theta_1_a, self.theta_2_a, self.theta_3_a, self.l_6_a = 0.0, 0.0, 0.0, 0.0, 0.0
+
+    def __str__(self) -> str:
+        return (f"ActuatorStates("
+                f"Position: d_1={self.d_1}, theta_1={self.theta_1}, theta_2={self.theta_2}, theta_3={self.theta_3}, l_6={self.l_6}; "
+                f"Velocity: d_1_v={self.d_1_v}, theta_1_v={self.theta_1_v}, theta_2_v={self.theta_2_v}, theta_3_v={self.theta_3_v}, l_6_v={self.l_6_v}; "
+                f"Acceleration: d_1_a={self.d_1_a}, theta_1_a={self.theta_1_a}, theta_2_a={self.theta_2_a}, theta_3_a={self.theta_3_a}, l_6_a={self.l_6_a})")
