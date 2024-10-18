@@ -47,13 +47,11 @@ class OriginTrajectory(object):
     def get_moving_time(self) -> float:
         return self.__moving_time
 
-    def origin_next_step(self, t) -> None | tuple:
+    def next_step(self, t: float) -> None | tuple:
         if t >= self.__moving_time:
             return None
 
-        org_x, org_y, org_z, org_phi = self.calculate_next_step(t)
-
-        return org_x, org_y, org_z, org_phi
+        return self.calculate_next_step(t)
 
     def calculate_next_step(self, t: float) -> Tuple[float, float, float, float]:
         a_0_org_x, a_1_org_x, a_2_org_x, a_3_org_x = self.x_coefficients

@@ -31,7 +31,7 @@ def update_robot(robot: RobotCrane, _, trajectory: Trajectory, elapsed_time_in_s
 def update_robot_with_new_origin(robot: RobotCrane, origin_trajectory: OriginTrajectory, trajectory: Trajectory,
                                  elapsed_time_in_seconds: float) -> bool:
     # Update robot origin
-    next_origin = origin_trajectory.origin_next_step(elapsed_time_in_seconds)
+    next_origin = origin_trajectory.next_step(elapsed_time_in_seconds)
     if next_origin is None:
         print("No next origin found, end streaming.")
         return False
@@ -51,7 +51,7 @@ def update_robot_with_new_origin_and_control_end_effector(robot: RobotCrane, ori
                                                           simulator: ControlSimulator,
                                                           elapsed_time_in_seconds: float) -> bool:
     # Get the next origin
-    next_origin = origin_trajectory.origin_next_step(elapsed_time_in_seconds)
+    next_origin = origin_trajectory.next_step(elapsed_time_in_seconds)
     if next_origin is None:
         print("No next origin found, end streaming.")
         return False
@@ -74,7 +74,8 @@ class RobotPoseStreamer(object):
         self.websocket_api = websocket_api
 
     async def stream_poses(self, robot: RobotCrane) -> None:
-        trajectory = Trajectory(robot)
+        trajectory = Trajectory(robot.act_states_t_0, robot.act_states_t_1, robot.max_vel, robot.max_acc,
+                                robot.max_ang_vel, robot.max_ang_acc)
         print(f"Moving time: {trajectory.get_moving_time()}")
 
         await self.stream(robot, None, trajectory, update_robot)
@@ -82,7 +83,8 @@ class RobotPoseStreamer(object):
     async def stream_poses_for_new_origin(self, robot: RobotCrane) -> None:
         origin_trajectory = OriginTrajectory(robot.origin_t_0, robot.origin_t_1)
 
-        trajectory = Trajectory(robot)
+        trajectory = Trajectory(robot.act_states_t_0, robot.act_states_t_1, robot.max_vel, robot.max_acc,
+                                robot.max_ang_vel, robot.max_ang_acc)
         trajectory.set_moving_time(origin_trajectory.min_move_time)
 
         print(f"Moving time: {trajectory.get_moving_time()}")

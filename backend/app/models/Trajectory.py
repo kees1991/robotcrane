@@ -6,46 +6,57 @@ from backend.app.services.tools.TrajectoryHelper import *
 class Trajectory(object):
     """Defining a trajectory for the robot"""
 
-    def __init__(self, robot: RobotCrane):
-        self.act_states_t_0 = robot.act_states_t_0
-        self.act_states_t_1 = robot.act_states_t_1
+    def __init__(self, act_states_t_0: ActuatorStates, act_states_t_1: ActuatorStates, max_vel: float, max_acc: float,
+                 max_ang_vel: float, max_ang_acc: float):
+        self.act_states_t_0 = act_states_t_0
+        self.act_states_t_1 = act_states_t_1
 
-        self.max_vel = robot.max_vel
-        self.max_acc = robot.max_acc
-        self.max_ang_vel = robot.max_ang_vel
-        self.max_ang_acc = robot.max_ang_acc
+        self.max_vel = max_vel
+        self.max_acc = max_acc
+        self.max_ang_vel = max_ang_vel
+        self.max_ang_acc = max_ang_acc
 
         self.__moving_time = self.min_move_time
 
     @property
     def min_move_time(self) -> float:
-        t_min_d_1 = calculate_minimum_move_time(self.max_vel, self.max_acc, self.act_states_t_0.d_1, self.act_states_t_1.d_1)
-        t_min_theta_1 = calculate_minimum_move_time(self.max_ang_vel, self.max_ang_acc, self.act_states_t_0.theta_1, self.act_states_t_1.theta_1)
-        t_min_theta_2 = calculate_minimum_move_time(self.max_ang_vel, self.max_ang_acc, self.act_states_t_0.theta_2, self.act_states_t_1.theta_2)
-        t_min_theta_3 = calculate_minimum_move_time(self.max_ang_vel, self.max_ang_acc, self.act_states_t_0.theta_3, self.act_states_t_1.theta_3)
-        t_min_l_6 = calculate_minimum_move_time(self.max_vel, self.max_acc, self.act_states_t_0.l_6, self.act_states_t_1.l_6)
+        t_min_d_1 = calculate_minimum_move_time(self.max_vel, self.max_acc, self.act_states_t_0.d_1,
+                                                self.act_states_t_1.d_1)
+        t_min_theta_1 = calculate_minimum_move_time(self.max_ang_vel, self.max_ang_acc, self.act_states_t_0.theta_1,
+                                                    self.act_states_t_1.theta_1)
+        t_min_theta_2 = calculate_minimum_move_time(self.max_ang_vel, self.max_ang_acc, self.act_states_t_0.theta_2,
+                                                    self.act_states_t_1.theta_2)
+        t_min_theta_3 = calculate_minimum_move_time(self.max_ang_vel, self.max_ang_acc, self.act_states_t_0.theta_3,
+                                                    self.act_states_t_1.theta_3)
+        t_min_l_6 = calculate_minimum_move_time(self.max_vel, self.max_acc, self.act_states_t_0.l_6,
+                                                self.act_states_t_1.l_6)
 
         return max(t_min_d_1, t_min_theta_1, t_min_theta_2, t_min_theta_3, t_min_l_6)
 
     @property
     def d_1_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.d_1, self.act_states_t_1.d_1, self.act_states_t_0.d_1_v, self.__moving_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.d_1, self.act_states_t_1.d_1,
+                                                self.act_states_t_0.d_1_v, self.__moving_time)
 
     @property
     def theta_1_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_1, self.act_states_t_1.theta_1, self.act_states_t_0.theta_1_v, self.__moving_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_1, self.act_states_t_1.theta_1,
+                                                self.act_states_t_0.theta_1_v, self.__moving_time)
 
     @property
     def theta_2_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_2, self.act_states_t_1.theta_2, self.act_states_t_0.theta_2_v, self.__moving_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_2, self.act_states_t_1.theta_2,
+                                                self.act_states_t_0.theta_2_v, self.__moving_time)
 
     @property
     def theta_3_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_3, self.act_states_t_1.theta_3, self.act_states_t_0.theta_3_v, self.__moving_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.theta_3, self.act_states_t_1.theta_3,
+                                                self.act_states_t_0.theta_3_v, self.__moving_time)
 
     @property
     def l_6_coefficients(self) -> Tuple[float, float, float, float]:
-        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.l_6, self.act_states_t_1.l_6, self.act_states_t_0.l_6_v, self.__moving_time)
+        return get_coefficients_nonzero_v_and_a(self.act_states_t_0.l_6, self.act_states_t_1.l_6,
+                                                self.act_states_t_0.l_6_v, self.__moving_time)
 
     def set_moving_time(self, time: float) -> None:
         self.__moving_time = time
