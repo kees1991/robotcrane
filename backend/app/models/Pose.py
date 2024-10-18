@@ -1,7 +1,9 @@
 import json
 
+import numpy as np
 
-def convert_to_xyz_tuple(frame):
+
+def convert_to_xyz_tuple(frame: np.ndarray) -> tuple:
     frame_t = frame[0:3, 3:4].T
     return tuple(map(tuple, frame_t))[0]
 
@@ -12,7 +14,7 @@ class Pose(object):
     The pose is represented by the xyz coordinates of all the joints and the rotation angles
     """
 
-    def __init__(self, robot_frames, origin_t_1, act_states_t_1):
+    def __init__(self, robot_frames: np.ndarray, origin_t_1, act_states_t_1):
         self.j_1 = convert_to_xyz_tuple(robot_frames[0])
         self.j_2 = convert_to_xyz_tuple(robot_frames[1])
         self.j_3 = convert_to_xyz_tuple(robot_frames[2])
@@ -26,7 +28,7 @@ class Pose(object):
         self.theta_2 = act_states_t_1.theta_2
         self.theta_3 = act_states_t_1.theta_3
 
-    def to_json(self):
+    def to_json(self) -> json:
         pose_json = {
             "j_1": self.j_1,
             "j_2": self.j_2,

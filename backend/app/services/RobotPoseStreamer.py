@@ -24,7 +24,7 @@ class RobotPoseStreamer(object):
         self.websocket = websocket
         self.websocket_api = websocket_api
 
-    async def stream_poses(self, robot: RobotCrane):
+    async def stream_poses(self, robot: RobotCrane) -> None:
         trajectory = Trajectory(robot)
 
         print(f"Moving time: {trajectory.mov_time}")
@@ -59,7 +59,7 @@ class RobotPoseStreamer(object):
         # Reset last signal time
         self.last_signal_time_ms = 0
 
-    async def stream_poses_for_new_origin(self, robot: RobotCrane):
+    async def stream_poses_for_new_origin(self, robot: RobotCrane) -> None:
         origin_trajectory = OriginTrajectory(robot.origin_t_0, robot.origin_t_1)
 
         trajectory = Trajectory(robot)
@@ -103,7 +103,7 @@ class RobotPoseStreamer(object):
         # Reset last signal time
         self.last_signal_time_ms = 0
 
-    async def stream_poses_for_new_origin_and_control_end_effector(self, robot: RobotCrane):
+    async def stream_poses_for_new_origin_and_control_end_effector(self, robot: RobotCrane) -> None:
         # TODO instantiate OriginTrajectory before Controller
         simulator = ControlSimulator(robot)
 

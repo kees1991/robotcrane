@@ -51,6 +51,9 @@ export class Communicator {
                 if (event.data.includes("Exception")) {
                     this.exception = event.data
                 }
+                if (event.data.includes("Invalid")) {
+                    this.exception = event.data
+                }
                 if (event.data.includes("l_1")) {
                     this.dimensions = new Dimensions(event.data)
                     this.areDimensionsInitialized = true
