@@ -8,7 +8,7 @@ from starlette.templating import Jinja2Templates
 
 from backend.app.models.RobotCrane import RobotCrane
 from backend.app.services.RobotPoseStreamer import RobotPoseStreamer
-from backend.app.services.RobotUpdateHelper import set_actuator_states, set_end_effectors, set_new_origin, get_pose
+from backend.app.services.tools.RobotUpdateHelper import set_actuator_states, set_end_effectors, set_new_origin, get_pose
 from backend.app.views.RobotTask import RobotTask
 from backend.app.views.WebSocketAPI import WebSocketAPI
 
@@ -87,7 +87,7 @@ async def process_request(robot: RobotCrane, websocket: WebSocket):
 
             case RobotTask.stream_poses_for_new_origin_and_control_end_effector:
                 streamer = RobotPoseStreamer(websocket, websocket_api)
-                await streamer.stream_poses_for_new_origin_and_control_end_effector2(robot)
+                await streamer.stream_poses_for_new_origin_and_control_end_effector(robot)
 
             case _:
                 raise ValueError("Invalid action")

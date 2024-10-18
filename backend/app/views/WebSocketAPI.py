@@ -6,13 +6,13 @@ class WebSocketAPI:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket) -> None:
         await websocket.accept()
         self.active_connections.append(websocket)
 
         print(f"Connected")
 
-    def disconnect(self, websocket: WebSocket):
+    def disconnect(self, websocket: WebSocket) -> None:
         self.active_connections.remove(websocket)
 
         print(f"Disconnected")

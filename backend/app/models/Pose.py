@@ -2,6 +2,8 @@ import json
 
 import numpy as np
 
+from backend.app.models.ActuatorStates import ActuatorStates
+
 
 def convert_to_xyz_tuple(frame: np.ndarray) -> tuple:
     frame_t = frame[0:3, 3:4].T
@@ -14,7 +16,7 @@ class Pose(object):
     The pose is represented by the xyz coordinates of all the joints and the rotation angles
     """
 
-    def __init__(self, robot_frames: np.ndarray, origin_t_1, act_states_t_1):
+    def __init__(self, robot_frames: np.ndarray, origin_t_1: tuple, act_states_t_1: ActuatorStates):
         self.j_1 = convert_to_xyz_tuple(robot_frames[0])
         self.j_2 = convert_to_xyz_tuple(robot_frames[1])
         self.j_3 = convert_to_xyz_tuple(robot_frames[2])

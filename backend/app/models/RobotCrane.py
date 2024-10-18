@@ -1,6 +1,3 @@
-import numpy as np
-
-from backend.app.models.ActuatorStates import ActuatorStates
 from backend.app.services.tools.KinematicsHelper import *
 
 
@@ -8,7 +5,7 @@ class RobotCrane(object):
 
     def __init__(self):
         # Robot dimensions
-        self.__l_1 = 1  # base column length
+        self.__l_1 = 1.0  # base column length
         self.__l_2 = 0.4  # upper arm length
         self.__l_3 = 0.4  # lower arm length
         self.__d_4 = -0.2  # wrist extension length
@@ -95,16 +92,19 @@ class RobotCrane(object):
 
     def get_phi(self) -> float:
         """Get the rotation of the robot end effector"""
-        return self.origin_t_1[3] + self.act_states_t_1.theta_1 + self.act_states_t_1.theta_2 + self.act_states_t_1.theta_3
+        return self.origin_t_1[
+            3] + self.act_states_t_1.theta_1 + self.act_states_t_1.theta_2 + self.act_states_t_1.theta_3
 
     def get_frames(self) -> np.ndarray:
         """Get the robot state frames"""
-        return np.around(calculate_state_frames(len(self.denavit_hartenberg_parameters), self.transformation_matrices), 5)
+        return np.around(calculate_state_frames(len(self.denavit_hartenberg_parameters), self.transformation_matrices),
+                         5)
 
     def inverse_kinematics(self, x: float, y: float, z: float, phi: float, do_open_gripper=True) -> ActuatorStates:
         """Robot inverse kinematics, including origin translation"""
 
-        phi, x, y, z = translate_desired_end_effector_state_for_new_origin(self.origin_translation_matrix, self.origin_t_1, phi, x, y, z)
+        phi, x, y, z = translate_desired_end_effector_state_for_new_origin(self.origin_translation_matrix,
+                                                                           self.origin_t_1, phi, x, y, z)
 
         d_1, theta_1, theta_2, theta_3, l_6 = calculate_inverse_kinematics(
             self.__l_2, self.__l_3, self.__d_4, self.__l_5, do_open_gripper, phi, x, y, z)

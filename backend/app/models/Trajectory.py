@@ -1,8 +1,6 @@
-from typing import Tuple
-
 from backend.app.models.ActuatorStates import ActuatorStates
 from backend.app.models.RobotCrane import RobotCrane
-from backend.app.services.tools.TrajectoryBuilder import *
+from backend.app.services.tools.TrajectoryHelper import *
 
 
 class Trajectory(object):

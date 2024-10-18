@@ -1,9 +1,14 @@
+from typing import Tuple
+
 import numpy as np
 from math import sin as s, cos as c
 from numpy.linalg import inv
 
+from backend.app.models.ActuatorStates import ActuatorStates
 
-def calculate_dh_parameters(l_2, l_3, d_4, l_5, act_states_t_1):
+
+def calculate_dh_parameters(l_2: float, l_3: float, d_4: float, l_5: float,
+                            act_states_t_1: ActuatorStates) -> np.ndarray:
     """Calculate the Denavit-Hartenberg parameters based on the robot dimensions and the actuator states"""
     d_1, theta_1, theta_2, theta_3, l_6 = act_states_t_1.get_states()
     return np.array(
@@ -18,7 +23,7 @@ def calculate_dh_parameters(l_2, l_3, d_4, l_5, act_states_t_1):
     )
 
 
-def trans_matrix_from_dh(dh_params):
+def trans_matrix_from_dh(dh_params: np.ndarray) -> np.ndarray:
     """Calculate transformation matrix based on the DH parameters"""
     d, a, alpha, theta = dh_params
     return np.array(
@@ -31,7 +36,7 @@ def trans_matrix_from_dh(dh_params):
     )
 
 
-def calculate_transformation_matrices(dh, t_origin):
+def calculate_transformation_matrices(dh: np.ndarray, t_origin: np.ndarray) -> np.ndarray:
     """Calculate transformation matrices for each joint and origin"""
     axis_count = len(dh)
 
@@ -44,7 +49,7 @@ def calculate_transformation_matrices(dh, t_origin):
     return t_matrices
 
 
-def calculate_state_frames(size, t_matrices):
+def calculate_state_frames(size: int, t_matrices: np.ndarray) -> np.ndarray:
     """Calculate the robot state frames with the transformation matrices"""
     fs = np.zeros((7, 4, 4))
     frame = np.eye(4)
@@ -54,7 +59,7 @@ def calculate_state_frames(size, t_matrices):
     return fs
 
 
-def calculate_origin_translation_matrix(origin):
+def calculate_origin_translation_matrix(origin: tuple) -> np.ndarray:
     """Calculate the translation matrix for an origin"""
     x, y, z, phi = origin[0], origin[1], origin[2], origin[3]
     return np.array(
@@ -67,7 +72,8 @@ def calculate_origin_translation_matrix(origin):
     )
 
 
-def translate_desired_end_effector_state_for_new_origin(T_origin, origin_t_1, phi, x, y, z):
+def translate_desired_end_effector_state_for_new_origin(T_origin: np.ndarray, origin_t_1: tuple, phi: float, x: float,
+                                                        y: float, z: float) -> Tuple[float, float, float, float]:
     """Calculate an end-effector desired state wrt to a new origin"""
     translated_goal = np.dot(T_origin, np.array([x, y, z, 1]))
     x, y, z = translated_goal[0], translated_goal[1], translated_goal[2]
@@ -76,7 +82,8 @@ def translate_desired_end_effector_state_for_new_origin(T_origin, origin_t_1, ph
     return phi, x, y, z
 
 
-def calculate_inverse_kinematics(l_2, l_3, d_4, l_5, do_open_gripper, phi, x, y, z):
+def calculate_inverse_kinematics(l_2: float, l_3: float, d_4: float, l_5: float, do_open_gripper: bool, phi: float,
+                                 x: float, y: float, z: float) -> Tuple[float, float, float, float, float]:
     l_6 = calculate_jaw_opening(do_open_gripper)
 
     g_x, g_y = calculate_gripper_position(l_6, phi, x, y)
@@ -91,7 +98,7 @@ def calculate_inverse_kinematics(l_2, l_3, d_4, l_5, do_open_gripper, phi, x, y,
     return d_1, theta_1, theta_2, theta_3, l_6
 
 
-def calculate_jaw_opening(do_open_gripper):
+def calculate_jaw_opening(do_open_gripper: bool) -> float:
     # For inverse kinematics we assume that gripper will be open or closed
     if do_open_gripper:
         return 0.1
@@ -99,13 +106,13 @@ def calculate_jaw_opening(do_open_gripper):
         return 0.0
 
 
-def calculate_gripper_position(l_6, phi, x, y):
+def calculate_gripper_position(l_6: float, phi: float, x: float, y: float) -> Tuple[float, float]:
     g_x = x - l_6 * np.cos(phi)
     g_y = y - l_6 * np.sin(phi)
     return g_x, g_y
 
 
-def calculate_elbow_rotation(l_2, l_3, w_x, w_y):
+def calculate_elbow_rotation(l_2: float, l_3: float, w_x: float, w_y: float) -> float:
     c_2 = (w_x ** 2 + w_y ** 2 - l_2 ** 2 - l_3 ** 2) / (2 * l_2 * l_3)
 
     if c_2 > 1:
@@ -117,21 +124,21 @@ def calculate_elbow_rotation(l_2, l_3, w_x, w_y):
     return np.arctan2(s_2, c_2)
 
 
-def calculate_swing_rotation(l_2, l_3, theta_2, w_x, w_y):
+def calculate_swing_rotation(l_2: float, l_3: float, theta_2: float, w_x: float, w_y: float) -> float:
     k_1 = l_2 + l_3 * (np.cos(theta_2))
     k_2 = l_3 * (np.sin(theta_2))
     return np.arctan2(w_y, w_x) - np.arctan2(k_2, k_1)
 
 
-def calculate_wrist_rotation(phi, theta_1, theta_2):
+def calculate_wrist_rotation(phi: float, theta_1: float, theta_2: float) -> float:
     return phi - theta_1 - theta_2
 
 
-def calculate_wrist_position(l_5, phi, g_x, g_y):
+def calculate_wrist_position(l_5: float, phi: float, g_x: float, g_y: float) -> Tuple[float, float]:
     w_x = g_x - l_5 * np.cos(phi)
     w_y = g_y - l_5 * np.sin(phi)
     return w_x, w_y
 
 
-def calculate_lift_position(d_4, z):
+def calculate_lift_position(d_4: float, z: float) -> float:
     return z - d_4
