@@ -18,9 +18,7 @@ export class Communicator {
         this.promise = this.newClientPromise;
 
         this.areDimensionsInitialized = true;
-        // @ts-ignore
-        this.dimensions = {l_1: 1.0, l_2: 0.4, l_3: 0.4, d_4: 0.2, l_5: 0.1, l_7: 0.1};
-        // TODO fix this?
+        this.dimensions = new Dimensions(1.0, 0.4, 0.4, 0.2, 0.1, 0.1);
 
         this.pose = {
             j_1: new THREE.Vector3(0.0, 0.0, 0.0),
