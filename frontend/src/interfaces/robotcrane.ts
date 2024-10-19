@@ -139,7 +139,6 @@ export class RobotCrane {
     }
 
     moveToPose = () => {
-        console.log(this._pose)
         this.pivot0.position.set(this._pose.j_1.x, this._pose.j_1.y, this._pose.j_1.z);
         this.pivot0.rotation.y = this._pose.theta_0;
         this.lift.position.y = this._dimensions.l1 * 0.5;

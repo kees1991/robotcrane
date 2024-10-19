@@ -34,7 +34,6 @@ const controls = new OrbitControls( camera, renderer.domElement );
 
 let communicator = new Communicator();
 communicator.initializeRobot()
-// communicator.getPose()
 
 const animateInit = () => {
     let id = requestAnimationFrame( animateInit );

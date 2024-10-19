@@ -71,7 +71,6 @@ export class RobotGui {
         let id = requestAnimationFrame( this.animate );
 
         this.controls.update();
-        console.log("robotgui counter: " + this.counter)
 
         // Cancel animation if there is an Exception from the backend
         if (this.communicator.exception !== "") {
