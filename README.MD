@@ -28,7 +28,11 @@ Follow these steps to set up the application:
    ```bash
    python3 -m venv .venv
    
-4. **Install requirements**
+4. **Activate virtual environment**
+   ```bash
+   source .venv/bin/activate
+   
+5. **Install requirements**
    ```bash
    pip3 install -r requirements.txt
    ```
