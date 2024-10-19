@@ -1,26 +1,15 @@
 import {Communicator} from "../services/communicator";
-import * as THREE from "three";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GUI} from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import {Dimensions} from "./dimensions";
 
 export class RobotGui {
-    renderer: THREE.WebGLRenderer;
-    scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
-    controls: OrbitControls;
     communicator: Communicator;
-    counter: number;
     guiInput : {states: any, position: any, org_position: any};
 
-    constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, controls: OrbitControls, communicator: Communicator) {
-        this.renderer = renderer;
-        this.scene = scene;
-        this.camera = camera;
-        this.controls = controls;
+    constructor(communicator: Communicator) {
         this.communicator = communicator;
-        this.counter = communicator.counter;
 
+        // Initialize default GUI inputs
         this.guiInput = {
             states: {d1: 0.5, theta1: 0, theta2: 0, theta3: 0, l6: 0.1},
             position: {x: 0.4, y: 0.4, z: 0.4, phi: 0, doOpenGripper: true},
@@ -44,52 +33,23 @@ export class RobotGui {
 
     resetRobot = () => {
         this.communicator.resetRobot()
-        this.animate();
     }
 
     moveActuators = () => {
         this.communicator.moveActuators(this.guiInput.states)
-        this.animate();
     }
 
     moveEndEffector = () => {
         this.communicator.moveEndEffector(this.guiInput.position)
-        this.animate();
     }
 
     moveOrigin = () => {
         this.communicator.moveOrigin(this.guiInput.org_position)
-        this.animate();
     }
 
     moveOriginControl = () => {
         this.communicator.moveOriginControlEndEffector(this.guiInput.org_position)
-        this.animate();
     }
-
-    animate = () => {
-        let id = requestAnimationFrame( this.animate );
-
-        this.controls.update();
-
-        // Cancel animation if there is an Exception from the backend
-        if (this.communicator.exception !== "") {
-            alert(this.communicator.exception)
-            this.communicator.exception = ""
-            console.log("Cancelling animation because of an Exception")
-            cancelAnimationFrame(id)
-        }
-
-        if (this.counter !== this.communicator.counter) {
-            if (this.communicator.robot != null) {
-                this.communicator.robot.moveToPose()
-            }
-            this.counter = this.communicator.counter
-        }
-
-        // Render
-        this.renderer.render( this.scene, this.camera );
-    };
 
     private addMoveActuatorFolder(gui: GUI, dimensions: Dimensions) {
         let actuatorsFolder = gui.addFolder('Move actuators');
@@ -125,7 +85,7 @@ export class RobotGui {
         moveOriginFolder.add(this.guiInput.org_position, 'y')
         moveOriginFolder.add(this.guiInput.org_position, 'z')
         moveOriginFolder.add(this.guiInput.org_position, 'phi')
-        var moveOriginParams = {
+        let moveOriginParams = {
             Submit: this.moveOrigin
         };
         moveOriginFolder.add(moveOriginParams, 'Submit');
@@ -138,7 +98,7 @@ export class RobotGui {
         moveOriginControlFolder.add(this.guiInput.org_position, 'y')
         moveOriginControlFolder.add(this.guiInput.org_position, 'z')
         moveOriginControlFolder.add(this.guiInput.org_position, 'phi')
-        var moveOriginControlParams = {
+        let moveOriginControlParams = {
             Submit: this.moveOriginControl
         };
         moveOriginControlFolder.add(moveOriginControlParams, 'Submit');

@@ -41,7 +41,7 @@ const animateInit = () => {
     console.log("Robot not initialized yet")
 
     if (communicator.robot != null) {
-        let robotGui = new RobotGui(renderer, scene, camera, controls, communicator)
+        let robotGui = new RobotGui(communicator)
         robotGui.createGui(communicator.robot.dimensions)
 
         communicator.robot.initScene(scene, light);
@@ -50,10 +50,36 @@ const animateInit = () => {
         console.log("Initialized robot")
 
         cancelAnimationFrame(id)
-        robotGui.animate()
+        animate()
 
     }
     renderer.render( scene, camera );
 }
+
+let counter = communicator.counter;
+const animate = () => {
+    let id = requestAnimationFrame( animate );
+
+    controls.update();
+
+    // Reset robot if there is an Exception from the backend
+    if (communicator.exception != null) {
+        alert(communicator.exception)
+        communicator.exception = undefined
+
+        console.log("Resetting robot")
+        communicator.resetRobot()
+    }
+
+    if (counter !== communicator.counter) {
+        if (communicator.robot != null) {
+            communicator.robot.moveToPose()
+        }
+        counter = communicator.counter
+    }
+
+    // Render
+    renderer.render( scene, camera );
+};
 
 animateInit()

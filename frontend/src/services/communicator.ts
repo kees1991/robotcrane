@@ -12,12 +12,20 @@ export class Communicator {
     robot?: RobotCrane;
 
     counter: number;
-    exception: string;
+    private _exception?: string | undefined;
 
     constructor() {
         this.promise = this.newClientPromise;
         this.counter = 0;
-        this.exception = "";
+    }
+
+
+    get exception(): string | undefined {
+        return this._exception;
+    }
+
+    set exception(value: string | undefined) {
+        this._exception = value;
     }
 
     get newClientPromise() {
@@ -34,10 +42,10 @@ export class Communicator {
                 resolve(wsClient);
 
                 if (event.data.includes("Exception")) {
-                    this.exception = event.data
+                    this._exception = event.data
                 }
                 if (event.data.includes("Invalid")) {
-                    this.exception = event.data
+                    this._exception = event.data
                 }
                 if (event.data.includes("init_robot_data")) {
                     // Init the robot with the dimensions and a pose
