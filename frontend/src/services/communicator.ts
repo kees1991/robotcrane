@@ -91,38 +91,38 @@ export class Communicator {
             .catch(error => alert("Connection error: " + error));
     }
 
-    initializeRobot = () => {
+    initializeRobot() {
         let message: Message = new Message("initialize_robot");
         this.sendMessage(message.toJsonString());
     }
 
-    resetRobot = () => {
+    resetRobot(){
         let message: Message = new Message("reset_robot");
         this.sendMessage(message.toJsonString());
     }
 
-    moveActuators = (actuatorStatesJson: object) => {
+    moveActuators(actuatorStatesJson: object) {
         let actuatorStates: ActuatorStates = ActuatorStates.fromJson(actuatorStatesJson);
 
         let message: Message = new Message("move_actuators", actuatorStates);
         this.sendMessage(message.toJsonString());
     }
 
-    moveEndEffector = (positionJson: object) => {
+    moveEndEffector(positionJson: object) {
         let position: Position = Position.fromJson(positionJson);
 
         let message: Message = new Message("move_end_effector", position);
         this.sendMessage(message.toJsonString());
     }
 
-    moveOrigin = (originPositionJson: object) => {
+    moveOrigin(originPositionJson: object){
         let position: OriginPosition = OriginPosition.fromJson(originPositionJson);
 
         let message: Message = new Message("move_origin", position);
         this.sendMessage(message.toJsonString());
     }
 
-    moveOriginControlEndEffector = (originPositionJson: object) => {
+    moveOriginControlEndEffector(originPositionJson: object) {
         let position: OriginPosition = OriginPosition.fromJson(originPositionJson);
 
         let message: Message = new Message("move_origin_control_end_effector", position);

@@ -43,6 +43,4 @@ export class Pose {
             json['theta_3']
         )
     }
-
-// TODO add fromjson method
 }
