@@ -24,105 +24,24 @@ export class RobotGui {
         this.counter = communicator.counter;
 
         this.guiInput = {
-            states: {
-                d_1: 0.5,
-                theta_1: 0,
-                theta_2: 0,
-                theta_3: 0,
-                l_6: 0.1
-            },
-            position: {
-                x: 0.4,
-                y: 0.4,
-                z: 0.4,
-                phi: 0,
-                openGripper: true
-            },
-            org_position: {
-                x: 0.4,
-                y: 0.4,
-                z: 0.2,
-                phi: 0
-            }
+            states: {d1: 0.5, theta1: 0, theta2: 0, theta3: 0, l6: 0.1},
+            position: {x: 0.4, y: 0.4, z: 0.4, phi: 0, doOpenGripper: true},
+            org_position: {x: 0.4, y: 0.4, z: 0.2, phi: 0}
         }
     }
 
-    initGui = () => {
+    createGui = () => {
         let gui = new GUI();
 
-        var resetParams = {
-            Reset: this.resetRobot
-        };
+        // Add Reset button
+        let resetParams = {Reset: this.resetRobot};
         gui.add(resetParams, 'Reset');
-        let actuatorsFolder = gui.addFolder('Move actuators');
-        let endEffFolder = gui.addFolder('Move end-effector');
-        let moveOriginFolder = gui.addFolder('Move origin');
-        let moveOriginControlFolder = gui.addFolder('Move origin and control end-effector')
 
-        actuatorsFolder.add(this.guiInput.states, 'd_1').min(this.robot.dimensions.d4).max(this.robot.dimensions.l1)
-        actuatorsFolder.add(this.guiInput.states, 'theta_1').min(-360).max(360)
-        actuatorsFolder.add(this.guiInput.states, 'theta_2').min(-150).max(150)
-        actuatorsFolder.add(this.guiInput.states, 'theta_3').min(-360).max(360)
-        actuatorsFolder.add(this.guiInput.states, 'l_6').min(0).max(this.robot.dimensions.l7)
-
-        var actuatorParams = {
-            Submit: this.moveActuators
-        };
-        actuatorsFolder.add(actuatorParams, 'Submit');
-        actuatorsFolder.close();
-
-        endEffFolder.add(this.guiInput.position, 'x')
-        endEffFolder.add(this.guiInput.position, 'y')
-        endEffFolder.add(this.guiInput.position, 'z')
-        endEffFolder.add(this.guiInput.position, 'phi')
-        endEffFolder.add(this.guiInput.position, 'openGripper')
-        var endEffParams = {
-            Submit: this.moveEndEffector
-        };
-        endEffFolder.add(endEffParams, 'Submit');
-        endEffFolder.close();
-
-        moveOriginFolder.add(this.guiInput.org_position, 'x')
-        moveOriginFolder.add(this.guiInput.org_position, 'y')
-        moveOriginFolder.add(this.guiInput.org_position, 'z')
-        moveOriginFolder.add(this.guiInput.org_position, 'phi')
-        var moveOriginParams = {
-            Submit: this.moveOrigin
-        };
-        moveOriginFolder.add(moveOriginParams, 'Submit');
-        moveOriginFolder.close();
-
-        moveOriginControlFolder.add(this.guiInput.org_position, 'x')
-        moveOriginControlFolder.add(this.guiInput.org_position, 'y')
-        moveOriginControlFolder.add(this.guiInput.org_position, 'z')
-        moveOriginControlFolder.add(this.guiInput.org_position, 'phi')
-        var moveOriginControlParams = {
-            Submit: this.moveOriginControl
-        };
-        moveOriginControlFolder.add(moveOriginControlParams, 'Submit');
-        moveOriginControlFolder.close();
-
-        return gui;
-    }
-
-    moveActuators = () => {
-        this.communicator.moveActuators(this.guiInput.states.d_1, this.guiInput.states.theta_1, this.guiInput.states.theta_2, this.guiInput.states.theta_3, this.guiInput.states.l_6)
-        this.animate();
-    }
-
-    moveEndEffector = () => {
-        this.communicator.moveEndEffector(this.guiInput.position.x, this.guiInput.position.y, this.guiInput.position.z, this.guiInput.position.phi, this.guiInput.position.openGripper)
-        this.animate();
-    }
-
-    moveOrigin = () => {
-        this.communicator.moveOrigin(this.guiInput.org_position.x, this.guiInput.org_position.y, this.guiInput.org_position.z, this.guiInput.org_position.phi)
-        this.animate();
-    }
-
-    moveOriginControl = () => {
-        this.communicator.moveOriginControlEndEffector(this.guiInput.org_position.x, this.guiInput.org_position.y, this.guiInput.org_position.z, this.guiInput.org_position.phi)
-        this.animate();
+        // Add GUI folders
+        this.addMoveActuatorFolder(gui);
+        this.addMoveEndEffectorFolder(gui);
+        this.addMoveOriginFolder(gui);
+        this.addMoveOriginControlEndEffectorFolder(gui);
     }
 
     resetRobot = () => {
@@ -131,10 +50,32 @@ export class RobotGui {
         this.animate();
     }
 
+    moveActuators = () => {
+        this.communicator.moveActuators(this.guiInput.states)
+        this.animate();
+    }
+
+    moveEndEffector = () => {
+        this.communicator.moveEndEffector(this.guiInput.position)
+        this.animate();
+    }
+
+    moveOrigin = () => {
+        this.communicator.moveOrigin(this.guiInput.org_position)
+        this.animate();
+    }
+
+    moveOriginControl = () => {
+        this.communicator.moveOriginControlEndEffector(this.guiInput.org_position)
+        this.animate();
+    }
+
     animate = () => {
         let id = requestAnimationFrame( this.animate );
 
         this.controls.update();
+
+        // Cancel animation if there is an Exception from the backend
         if (this.communicator.exception !== "") {
             alert(this.communicator.exception)
             this.communicator.exception = ""
@@ -151,4 +92,58 @@ export class RobotGui {
         // Render
         this.renderer.render( this.scene, this.camera );
     };
+
+    private addMoveActuatorFolder(gui: GUI) {
+        let actuatorsFolder = gui.addFolder('Move actuators');
+        actuatorsFolder.add(this.guiInput.states, 'd1').min(this.robot.dimensions.d4).max(this.robot.dimensions.l1)
+        actuatorsFolder.add(this.guiInput.states, 'theta1').min(-360).max(360)
+        actuatorsFolder.add(this.guiInput.states, 'theta2').min(-150).max(150)
+        actuatorsFolder.add(this.guiInput.states, 'theta3').min(-360).max(360)
+        actuatorsFolder.add(this.guiInput.states, 'l6').min(0).max(this.robot.dimensions.l7)
+        let actuatorParams = {
+            Submit: this.moveActuators
+        };
+        actuatorsFolder.add(actuatorParams, 'Submit');
+        actuatorsFolder.close();
+    }
+
+    private addMoveEndEffectorFolder(gui: GUI) {
+        let endEffFolder = gui.addFolder('Move end-effector');
+        endEffFolder.add(this.guiInput.position, 'x')
+        endEffFolder.add(this.guiInput.position, 'y')
+        endEffFolder.add(this.guiInput.position, 'z')
+        endEffFolder.add(this.guiInput.position, 'phi')
+        endEffFolder.add(this.guiInput.position, 'doOpenGripper')
+        let endEffParams = {
+            Submit: this.moveEndEffector
+        };
+        endEffFolder.add(endEffParams, 'Submit');
+        endEffFolder.close();
+    }
+
+    private addMoveOriginFolder(gui: GUI) {
+        let moveOriginFolder = gui.addFolder('Move origin');
+        moveOriginFolder.add(this.guiInput.org_position, 'x')
+        moveOriginFolder.add(this.guiInput.org_position, 'y')
+        moveOriginFolder.add(this.guiInput.org_position, 'z')
+        moveOriginFolder.add(this.guiInput.org_position, 'phi')
+        var moveOriginParams = {
+            Submit: this.moveOrigin
+        };
+        moveOriginFolder.add(moveOriginParams, 'Submit');
+        moveOriginFolder.close();
+    }
+
+    private addMoveOriginControlEndEffectorFolder(gui: GUI) {
+        let moveOriginControlFolder = gui.addFolder('Move origin and control end-effector')
+        moveOriginControlFolder.add(this.guiInput.org_position, 'x')
+        moveOriginControlFolder.add(this.guiInput.org_position, 'y')
+        moveOriginControlFolder.add(this.guiInput.org_position, 'z')
+        moveOriginControlFolder.add(this.guiInput.org_position, 'phi')
+        var moveOriginControlParams = {
+            Submit: this.moveOriginControl
+        };
+        moveOriginControlFolder.add(moveOriginControlParams, 'Submit');
+        moveOriginControlFolder.close();
+    }
 }

@@ -10,4 +10,8 @@ export class OriginPosition {
         this.z = z;
         this.phi = phi;
     }
+
+    static fromJson(json: any) {
+        return new OriginPosition(json.x, json.y, json.z, json.phi);
+    }
 }

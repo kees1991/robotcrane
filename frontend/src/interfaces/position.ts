@@ -12,4 +12,8 @@ export class Position {
         this.phi = phi;
         this.doOpenGripper = doOpenGripper;
     }
+
+    static fromJson(json: any): Position {
+        return new Position(json.x, json.y, json.z, json.phi, json.doOpenGripper);
+    }
 }

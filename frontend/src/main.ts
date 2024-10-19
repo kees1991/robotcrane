@@ -6,7 +6,7 @@ import {RobotGui} from "./interfaces/robotgui.js";
 
 let scene = new THREE.Scene();
 
-// Add grid
+// Add a grid
 let grid = new THREE.GridHelper(2, 10);
 scene.add(grid);
 
@@ -42,7 +42,7 @@ const animateInit = () => {
         robot.initScene(scene, light);
 
         let robotGui = new RobotGui(renderer, scene, camera, controls, communicator, robot)
-        robotGui.initGui()
+        robotGui.createGui()
 
         console.log("Initialized robot dimensions")
         communicator.areDimensionsInitialized = false

@@ -90,29 +90,29 @@ export class Communicator {
         this.sendMessage(message.toJsonString());
     }
 
-    moveActuators = (d1: number, theta1: number, theta2: number, theta3: number, l6: number) => {
-        let actuatorStates: ActuatorStates = new ActuatorStates(d1, theta1, theta2, theta3, l6);
+    moveActuators = (actuatorStatesJson: object) => {
+        let actuatorStates: ActuatorStates = ActuatorStates.fromJson(actuatorStatesJson);
 
         let message: Message = new Message("move_actuators", actuatorStates);
         this.sendMessage(message.toJsonString());
     }
 
-    moveEndEffector = (x : number, y: number, z: number, phi: number, doOpenGripper: boolean) => {
-        let position: Position = new Position(x, y, z, phi, doOpenGripper);
+    moveEndEffector = (positionJson: object) => {
+        let position: Position = Position.fromJson(positionJson);
 
         let message: Message = new Message("move_end_effector", position);
         this.sendMessage(message.toJsonString());
     }
 
-    moveOrigin = (x : number, y: number, z: number, phi: number) => {
-        let position: OriginPosition = new OriginPosition(x, y, z, phi);
+    moveOrigin = (originPositionJson: object) => {
+        let position: OriginPosition = OriginPosition.fromJson(originPositionJson);
 
         let message: Message = new Message("move_origin", position);
         this.sendMessage(message.toJsonString());
     }
 
-    moveOriginControlEndEffector = (x : number, y: number, z: number, phi: number) => {
-        let position: OriginPosition = new OriginPosition(x, y, z, phi);
+    moveOriginControlEndEffector = (originPositionJson: object) => {
+        let position: OriginPosition = OriginPosition.fromJson(originPositionJson);
 
         let message: Message = new Message("move_origin_control_end_effector", position);
         this.sendMessage(message.toJsonString());
