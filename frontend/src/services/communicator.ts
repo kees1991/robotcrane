@@ -33,8 +33,6 @@ export class Communicator {
             wsClient.onmessage = (event) => {
                 resolve(wsClient);
 
-                console.log('Receiving message: ' + event.data)
-
                 if (event.data.includes("Exception")) {
                     this.exception = event.data
                 }
@@ -50,7 +48,6 @@ export class Communicator {
 
                     this.robot = new RobotCrane(dimensions, pose);
                     this.counter++
-                    console.log("communicator counter: " + this.counter)
                 }
 
                 if (event.data.includes("pose_data")) {

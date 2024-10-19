@@ -83,7 +83,6 @@ export class RobotGui {
         if (this.counter !== this.communicator.counter) {
             if (this.communicator.robot != null) {
                 this.communicator.robot.moveToPose()
-                console.log("Move to pose")
             }
             this.counter = this.communicator.counter
         }
