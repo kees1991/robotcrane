@@ -13,7 +13,6 @@ def set_actuator_states(robot: RobotCrane, states: json) -> None:
 
 def convert_json_to_actuator_states(act_json: json) -> ActuatorStates:
     # Convert degrees to radians
-    print(act_json)
     act_states = ActuatorStates(
         act_json["d1"],
         np.deg2rad(act_json["theta1"]),
