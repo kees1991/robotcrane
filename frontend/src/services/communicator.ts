@@ -11,12 +11,12 @@ export class Communicator {
 
     robot?: RobotCrane;
 
-    counter: number;
+    private _shouldUpdatePose: boolean;
     private _exception?: string | undefined;
 
     constructor() {
         this.promise = this.newClientPromise;
-        this.counter = 0;
+        this._shouldUpdatePose = false;
     }
 
 
@@ -26,6 +26,15 @@ export class Communicator {
 
     set exception(value: string | undefined) {
         this._exception = value;
+    }
+
+
+    get shouldUpdatePose(): boolean {
+        return this._shouldUpdatePose;
+    }
+
+    set shouldUpdatePose(value: boolean) {
+        this._shouldUpdatePose = value;
     }
 
     get newClientPromise() {
@@ -42,27 +51,27 @@ export class Communicator {
                 resolve(wsClient);
 
                 if (event.data.includes("Exception")) {
-                    this._exception = event.data
+                    this._exception = event.data;
                 }
                 if (event.data.includes("Invalid")) {
-                    this._exception = event.data
+                    this._exception = event.data;
                 }
                 if (event.data.includes("init_robot_data")) {
                     // Init the robot with the dimensions and a pose
                     const dataJson = JSON.parse(event.data);
-                    const initDataJson = dataJson["init_robot_data"]
+                    const initDataJson = dataJson["init_robot_data"];
                     let dimensions = Dimensions.fromJson(initDataJson["dimensions"]);
                     let pose = Pose.fromJson(initDataJson["pose"]);
 
                     this.robot = new RobotCrane(dimensions, pose);
-                    this.counter++
+                    this._shouldUpdatePose = true;
                 }
 
                 if (event.data.includes("pose_data")) {
                     const dataJson = JSON.parse(event.data);
-                    const poseDataJson = dataJson["pose_data"]
+                    const poseDataJson = dataJson["pose_data"];
 
-                    this.counter++
+                    this._shouldUpdatePose = true;
                     if (this.robot != null) {
                         this.robot.pose = Pose.fromJson(poseDataJson);
                     }
@@ -77,9 +86,9 @@ export class Communicator {
         this.promise
             .then(wsClient => {
                 wsClient.send(messageString);
-                console.log('Sending message' + messageString)
+                console.log('Sending message' + messageString);
             })
-            .catch(error => alert("Connection error: " + error))
+            .catch(error => alert("Connection error: " + error));
     }
 
     initializeRobot = () => {

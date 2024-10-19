@@ -33,53 +33,50 @@ document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 
 let communicator = new Communicator();
-communicator.initializeRobot()
+communicator.initializeRobot();
 
 const animateInit = () => {
     let id = requestAnimationFrame( animateInit );
 
-    console.log("Robot not initialized yet")
+    console.log("Robot not initialized yet");
 
     if (communicator.robot != null) {
-        let robotGui = new RobotGui(communicator)
-        robotGui.createGui(communicator.robot.dimensions)
+        let robotGui = new RobotGui(communicator);
+        robotGui.createGui(communicator.robot.dimensions);
 
         communicator.robot.initScene(scene, light);
-        communicator.robot.moveToPose()
+        communicator.robot.moveToPose();
+        communicator.shouldUpdatePose = false;
 
-        console.log("Initialized robot")
+        console.log("Initialized robot");
 
-        cancelAnimationFrame(id)
-        animate()
+        cancelAnimationFrame(id);
+        animate();
 
     }
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
 }
-
-let counter = communicator.counter;
 const animate = () => {
-    let id = requestAnimationFrame( animate );
+    let id = requestAnimationFrame(animate);
 
     controls.update();
 
     // Reset robot if there is an Exception from the backend
     if (communicator.exception != null) {
-        alert(communicator.exception)
-        communicator.exception = undefined
+        alert(communicator.exception);
+        communicator.exception = undefined;
 
-        console.log("Resetting robot")
-        communicator.resetRobot()
+        console.log("Resetting robot");
+        communicator.resetRobot();
     }
 
-    if (counter !== communicator.counter) {
-        if (communicator.robot != null) {
-            communicator.robot.moveToPose()
-        }
-        counter = communicator.counter
+    if (communicator.robot != null && communicator.shouldUpdatePose) {
+        communicator.robot.moveToPose();
+        communicator.shouldUpdatePose = false;
     }
 
     // Render
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
 };
 
-animateInit()
+animateInit();
