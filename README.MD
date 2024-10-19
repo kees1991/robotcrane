@@ -33,6 +33,8 @@ Follow these steps to set up the application:
    
 ## Running
 
+Follow these steps to run the application locally:
+
 1. **Run app using uvicorn** 
     ```bash
    uvicorn backend.main:app --reload --port 8080
