@@ -6,12 +6,6 @@ Author: Kees Loeff
 
 Simulating a robot crane, see [take home assignment](https://terraformco.notion.site/Visualizing-a-Robotic-Crane-Controls-3134774001644de2afaf41e82e01654b).
 
-## Requirements
-
-- Python 3.8 or higher
-- pip (Python package installer)
-- Virtual environment (optional but recommended)
-
 ## Installation
 
 Follow these steps to set up the application:
