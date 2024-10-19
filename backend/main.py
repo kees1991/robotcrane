@@ -9,7 +9,7 @@ from starlette.templating import Jinja2Templates
 from backend.app.models.RobotCrane import RobotCrane
 from backend.app.services.RobotPoseStreamer import RobotPoseStreamer
 from backend.app.services.tools.RobotUpdateHelper import set_actuator_states, set_end_effectors, set_new_origin, \
-    get_pose
+    get_pose, initialize_robot
 from backend.app.views.RobotTask import RobotTask
 from backend.app.views.WebSocketAPI import WebSocketAPI
 
@@ -58,11 +58,13 @@ async def process_request(robot: RobotCrane, websocket: WebSocket):
 
         # Handle action
         match action:
+            case RobotTask.initialize_robot:
+                robot = RobotCrane()
+                init_data = initialize_robot(robot)
+                await websocket_api.send_message(websocket, init_data)
+
             case RobotTask.reset_robot:
                 robot = RobotCrane()
-                await websocket_api.send_message(websocket, "True")
-
-            case RobotTask.get_pose:
                 pose = get_pose(robot)
                 await websocket_api.send_message(websocket, pose)
 

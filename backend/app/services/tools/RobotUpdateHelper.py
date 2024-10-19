@@ -6,6 +6,18 @@ from backend.app.models.Pose import Pose
 from backend.app.models.RobotCrane import RobotCrane
 
 
+def initialize_robot(robot: RobotCrane) -> json:
+    dimensions = robot.get_dimensions()
+    pose = Pose(robot.get_frames(), robot.origin_t_1, robot.act_states_t_1)
+
+    return json.dumps({"init_robot_data": {"dimensions": dimensions.__dict__, "pose": pose.__dict__}})
+
+
+def get_pose(robot: RobotCrane) -> json:
+    pose = Pose(robot.get_frames(), robot.origin_t_1, robot.act_states_t_1)
+    return json.dumps({"pose_data": pose.__dict__})
+
+
 def set_actuator_states(robot: RobotCrane, states: json) -> None:
     act_states = convert_json_to_actuator_states(states)
     robot.set_act_states_t_1(act_states)
@@ -42,7 +54,3 @@ def convert_json_to_end_effector_position(pos_json: json) -> tuple[float, float,
     phi = float(np.deg2rad(pos_json["phi"]))
 
     return x, y, z, phi
-
-
-def get_pose(robot: RobotCrane) -> json:
-    return Pose(robot.get_frames(), robot.origin_t_1, robot.act_states_t_1).to_json()

@@ -31,17 +31,4 @@ class Pose(object):
         self.theta_3 = act_states_t_1.theta_3
 
     def to_json(self) -> json:
-        pose_json = {
-            "j_1": self.j_1,
-            "j_2": self.j_2,
-            "j_3": self.j_3,
-            "j_4": self.j_4,
-            "j_5": self.j_5,
-            "j_6": self.j_6,
-            "j_7": self.j_7,
-            "theta_0": self.theta_0,
-            "theta_1": self.theta_1,
-            "theta_2": self.theta_2,
-            "theta_3": self.theta_3,
-        }
-        return json.dumps(pose_json)
+        return json.dumps(self.__dict__)

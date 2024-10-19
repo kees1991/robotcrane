@@ -120,7 +120,7 @@ class RobotPoseStreamer(object):
 
             # Send the pose to the frontend via websocket
             pose = Pose(robot.get_frames(), robot.origin_t_1, robot.act_states_t_1)
-            await self.websocket_api.send_message(self.websocket, pose.to_json())
+            await self.websocket_api.send_json_message(self.websocket, {"pose_data": pose.__dict__})
 
             # Yield control to the event loop
             await asyncio.sleep(0)

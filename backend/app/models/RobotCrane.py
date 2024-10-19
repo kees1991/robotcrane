@@ -1,3 +1,4 @@
+from backend.app.models.Dimensions import Dimensions
 from backend.app.services.tools.KinematicsHelper import *
 
 
@@ -5,12 +6,7 @@ class RobotCrane(object):
 
     def __init__(self):
         # Robot dimensions
-        self.__l_1 = 1.0  # base column length
-        self.__l_2 = 0.4  # upper arm length
-        self.__l_3 = 0.4  # lower arm length
-        self.__d_4 = -0.2  # wrist extension length
-        self.__l_5 = 0.1  # gripper length
-        self.__l_7 = 0.1  # maximum jaw extension length
+        self.__dimensions = Dimensions(1.0, 0.4, 0.4, -0.2, 0.1, 0.1)
 
         # Robot limits (maximum positions, velocities, and accelerations)
         self.__min_angle = np.deg2rad(-360)
@@ -33,7 +29,8 @@ class RobotCrane(object):
 
     @property
     def denavit_hartenberg_parameters(self) -> np.ndarray:
-        return calculate_dh_parameters(self.__l_2, self.__l_3, self.__d_4, self.__l_5, self.act_states_t_1)
+        return calculate_dh_parameters(self.__dimensions.l_2, self.__dimensions.l_3, self.__dimensions.d_4,
+                                       self.__dimensions.l_5, self.act_states_t_1)
 
     @property
     def transformation_matrices(self) -> np.ndarray:
@@ -58,7 +55,7 @@ class RobotCrane(object):
 
         # Lift height should not be greater than base column length
         # or smaller than the wrist extensions
-        if not (abs(self.__d_4) <= act_states.d_1 <= self.__l_1):
+        if not (abs(self.__dimensions.d_4) <= act_states.d_1 <= self.__dimensions.l_1):
             raise ValueError("Position out of reach: D1 is out of bounds")
 
         # Swing angle should not be greater than +- 360 degrees
@@ -75,8 +72,11 @@ class RobotCrane(object):
             raise ValueError("Position out of reach: Theta 3 is out of bounds")
 
         # Jaw extensions should not be greater than the max jaw extensions
-        if not (-self.__l_7 <= act_states.l_6 <= self.__l_7):
+        if not (-self.__dimensions.l_7 <= act_states.l_6 <= self.__dimensions.l_7):
             raise ValueError("Position out of reach: L6 is out of bounds")
+
+    def get_dimensions(self) -> Dimensions:
+        return self.__dimensions
 
     def get_x_position(self) -> float:
         """Get the x position of the robot end effector"""
@@ -107,7 +107,8 @@ class RobotCrane(object):
                                                                            self.origin_t_1, phi, x, y, z)
 
         d_1, theta_1, theta_2, theta_3, l_6 = calculate_inverse_kinematics(
-            self.__l_2, self.__l_3, self.__d_4, self.__l_5, do_open_gripper, phi, x, y, z)
+            self.__dimensions.l_2, self.__dimensions.l_3, self.__dimensions.d_4, self.__dimensions.l_5,
+            do_open_gripper, phi, x, y, z)
 
         return ActuatorStates(d_1, theta_1, theta_2, theta_3, l_6)
 

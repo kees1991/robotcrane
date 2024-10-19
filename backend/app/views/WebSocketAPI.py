@@ -1,3 +1,5 @@
+import json
+
 from starlette.websockets import WebSocket
 from typing import List
 
@@ -22,3 +24,6 @@ class WebSocketAPI:
 
     async def send_message(self, websocket: WebSocket, message: str):
         await websocket.send_text(message)
+
+    async def send_json_message(self, websocket: WebSocket, json_message: json):
+        await websocket.send_json(json_message)
