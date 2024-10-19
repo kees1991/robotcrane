@@ -61,12 +61,12 @@ async def process_request(robot: RobotCrane, websocket: WebSocket):
             case RobotTask.initialize_robot:
                 robot = RobotCrane()
                 init_data = initialize_robot(robot)
-                await websocket_api.send_message(websocket, init_data)
+                await websocket_api.send_json_message(websocket, init_data)
 
             case RobotTask.reset_robot:
                 robot = RobotCrane()
                 pose = get_pose(robot)
-                await websocket_api.send_message(websocket, pose)
+                await websocket_api.send_json_message(websocket, pose)
 
             case RobotTask.move_actuators:
                 set_actuator_states(robot, json_data["data"])

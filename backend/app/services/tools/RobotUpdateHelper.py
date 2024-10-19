@@ -6,16 +6,16 @@ from backend.app.models.Pose import Pose
 from backend.app.models.RobotCrane import RobotCrane
 
 
-def initialize_robot(robot: RobotCrane) -> json:
+def initialize_robot(robot: RobotCrane) -> dict:
     dimensions = robot.get_dimensions()
     pose = Pose(robot.get_frames(), robot.origin_t_1, robot.act_states_t_1)
 
-    return json.dumps({"init_robot_data": {"dimensions": dimensions.__dict__, "pose": pose.__dict__}})
+    return {"init_robot_data": {"dimensions": dimensions.__dict__, "pose": pose.__dict__}}
 
 
-def get_pose(robot: RobotCrane) -> json:
+def get_pose(robot: RobotCrane) -> dict:
     pose = Pose(robot.get_frames(), robot.origin_t_1, robot.act_states_t_1)
-    return json.dumps({"pose_data": pose.__dict__})
+    return {"pose_data": pose.__dict__}
 
 
 def set_actuator_states(robot: RobotCrane, states: json) -> None:
