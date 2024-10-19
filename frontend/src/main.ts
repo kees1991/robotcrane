@@ -31,24 +31,24 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 const controls = new OrbitControls( camera, renderer.domElement );
-let communicator = new Communicator();
 
-communicator.getPose()
+let communicator = new Communicator();
+communicator.initializeRobot()
+// communicator.getPose()
+
 const animateInit = () => {
     let id = requestAnimationFrame( animateInit );
 
-    if (communicator.areDimensionsInitialized) {
-        let robot = new RobotCrane(communicator.dimensions, communicator.pose);
-        robot.initScene(scene, light);
+    console.log("Robot not initialized yet")
 
-        let robotGui = new RobotGui(renderer, scene, camera, controls, communicator, robot)
-        robotGui.createGui()
+    if (communicator.robot != null) {
+        let robotGui = new RobotGui(renderer, scene, camera, controls, communicator)
+        robotGui.createGui(communicator.robot.dimensions)
 
-        console.log("Initialized robot dimensions")
-        communicator.areDimensionsInitialized = false
+        communicator.robot.initScene(scene, light);
+        communicator.robot.moveToPose()
 
-        robot.pose = communicator.pose
-        robot.moveToPose()
+        console.log("Initialized robot")
 
         cancelAnimationFrame(id)
         robotGui.animate()

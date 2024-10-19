@@ -14,4 +14,8 @@ export class Dimensions {
         this.l5 = l5;
         this.l7 = l7;
     }
+
+    static fromJson(json: any): Dimensions {
+        return new Dimensions(json.l_1, json.l_2, json.l_3, -json.d_4, json.l_5, json.l_7)
+    }
 }

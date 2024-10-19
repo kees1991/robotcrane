@@ -17,11 +17,13 @@ const gripperExtMaterial = new THREE.MeshLambertMaterial({
       color: 0x196F3D})
 
 export class RobotCrane {
+    private readonly _dimensions: Dimensions
+    private _pose : Pose;
+
     group: THREE.Group<THREE.Object3DEventMap>;
     thickness: number;
     jawThickness: number;
     jawLength: number;
-    dimensions: Dimensions
 
     pivot0: THREE.Mesh<any, THREE.MeshLambertMaterial>;
     liftGeo: THREE.BoxGeometry;
@@ -55,36 +57,34 @@ export class RobotCrane {
     moveableJawGeo: THREE.BoxGeometry;
     moveableJaw: THREE.Mesh<any, THREE.MeshLambertMaterial>;
 
-    pose : Pose;
-
-    constructor(dimensions : Dimensions, pose : Pose) {
+    constructor(dimensions: Dimensions, pose: Pose) {
         this.group = new THREE.Group();
 
         this.thickness = 0.05;
         this.jawThickness = 0.01;
         this.jawLength = 0.05;
 
-        this.dimensions = dimensions;
-        this.pose = pose;
+        this._dimensions = dimensions;
+        this._pose = pose;
 
         this.pivot0 = new THREE.Mesh(new THREE.CylinderGeometry(this.thickness, this.thickness,this.thickness), liftMaterial);
-        this.liftGeo = new THREE.BoxGeometry(this.thickness, this.dimensions.l1, this.thickness);
+        this.liftGeo = new THREE.BoxGeometry(this.thickness, this._dimensions.l1, this.thickness);
         this.lift = new THREE.Mesh(this.liftGeo, liftMaterial);
 
         this.pivot = new THREE.Mesh(new THREE.CylinderGeometry(this.thickness, this.thickness,this.thickness), liftMaterial);
-        this.upperArmGeo = new THREE.BoxGeometry(this.dimensions.l2, this.thickness, this.thickness);
+        this.upperArmGeo = new THREE.BoxGeometry(this._dimensions.l2, this.thickness, this.thickness);
         this.upperArm = new THREE.Mesh(this.upperArmGeo, upperArmMaterial);
 
         this.pivot2 = new THREE.Mesh(new THREE.CylinderGeometry(this.thickness, this.thickness,this.thickness), upperArmMaterial);
-        this.lowerArmGeo = new THREE.BoxGeometry(this.dimensions.l3, this.thickness, this.thickness);
+        this.lowerArmGeo = new THREE.BoxGeometry(this._dimensions.l3, this.thickness, this.thickness);
         this.lowerArm = new THREE.Mesh(this.lowerArmGeo, lowerArmMaterial);
 
         this.pivot3 = new THREE.Mesh(new THREE.CylinderGeometry(this.thickness, this.thickness,this.thickness), lowerArmMaterial);
-        this.wristExtGeo = new THREE.BoxGeometry(this.thickness, this.dimensions.d4, this.thickness);
+        this.wristExtGeo = new THREE.BoxGeometry(this.thickness, this._dimensions.d4, this.thickness);
         this.wristExt = new THREE.Mesh(this.wristExtGeo, wristExtMaterial);
 
         this.pivot4 = new THREE.Mesh(new THREE.CylinderGeometry(this.thickness, this.thickness,this.thickness), wristExtMaterial);
-        this.gripperGeo = new THREE.BoxGeometry(this.dimensions.l5, this.thickness, this.thickness);
+        this.gripperGeo = new THREE.BoxGeometry(this._dimensions.l5, this.thickness, this.thickness);
         this.gripper = new THREE.Mesh(this.gripperGeo, gripperMaterial);
 
         this.pivot5 = new THREE.Object3D()
@@ -92,12 +92,21 @@ export class RobotCrane {
         this.fixedJaw = new THREE.Mesh(this.fixedJawGeo, gripperExtMaterial);
 
         this.pivot6 = new THREE.Object3D()
-        this.gripperExtGeo = new THREE.BoxGeometry(this.dimensions.l7, this.thickness, this.thickness);
+        this.gripperExtGeo = new THREE.BoxGeometry(this._dimensions.l7, this.thickness, this.thickness);
         this.gripperExt = new THREE.Mesh(this.gripperExtGeo, gripperExtMaterial);
 
         this.pivot7 = new THREE.Object3D()
         this.moveableJawGeo = new THREE.BoxGeometry(this.jawThickness, this.jawLength, this.thickness);
         this.moveableJaw = new THREE.Mesh(this.moveableJawGeo, gripperExtMaterial);
+    }
+
+
+    get dimensions(): Dimensions {
+        return this._dimensions;
+    }
+
+    set pose(value: Pose) {
+        this._pose = value;
     }
 
     initScene = (scene: THREE.Scene, light : THREE.DirectionalLight) => {
@@ -130,37 +139,38 @@ export class RobotCrane {
     }
 
     moveToPose = () => {
-        this.pivot0.position.set(this.pose.j_1.x, this.pose.j_1.y, this.pose.j_1.z);
-        this.pivot0.rotation.y = this.pose.theta_0;
-        this.lift.position.y = this.dimensions.l1 * 0.5;
+        console.log(this._pose)
+        this.pivot0.position.set(this._pose.j_1.x, this._pose.j_1.y, this._pose.j_1.z);
+        this.pivot0.rotation.y = this._pose.theta_0;
+        this.lift.position.y = this._dimensions.l1 * 0.5;
 
-        this.pivot.position.set(this.pose.j_2.x, this.pose.j_2.y, this.pose.j_2.z);
-        this.pivot.rotation.y = this.pose.theta_0 + this.pose.theta_1;
-        this.upperArm.position.x = this.dimensions.l2 * 0.5;
+        this.pivot.position.set(this._pose.j_2.x, this._pose.j_2.y, this._pose.j_2.z);
+        this.pivot.rotation.y = this._pose.theta_0 + this._pose.theta_1;
+        this.upperArm.position.x = this._dimensions.l2 * 0.5;
 
-        this.pivot2.position.set(this.pose.j_3.x, this.pose.j_3.y, this.pose.j_3.z);
-        this.pivot2.rotation.y = this.pose.theta_0 + this.pose.theta_1 + this.pose.theta_2;
-        this.lowerArm.position.x = this.dimensions.l3 * 0.5;
+        this.pivot2.position.set(this._pose.j_3.x, this._pose.j_3.y, this._pose.j_3.z);
+        this.pivot2.rotation.y = this._pose.theta_0 + this._pose.theta_1 + this._pose.theta_2;
+        this.lowerArm.position.x = this._dimensions.l3 * 0.5;
 
-        this.pivot3.position.set(this.pose.j_4.x, this.pose.j_4.y, this.pose.j_4.z);
-        this.pivot3.rotation.y = this.pose.theta_0 + this.pose.theta_1 + this.pose.theta_2 + this.pose.theta_3;
-        this.wristExt.position.y = -this.dimensions.d4 * 0.5;
+        this.pivot3.position.set(this._pose.j_4.x, this._pose.j_4.y, this._pose.j_4.z);
+        this.pivot3.rotation.y = this._pose.theta_0 + this._pose.theta_1 + this._pose.theta_2 + this._pose.theta_3;
+        this.wristExt.position.y = -this._dimensions.d4 * 0.5;
 
-        this.pivot4.position.set(this.pose.j_5.x, this.pose.j_5.y, this.pose.j_5.z);
-        this.pivot4.rotation.y = this.pose.theta_0 + this.pose.theta_1 + this.pose.theta_2 + this.pose.theta_3;
+        this.pivot4.position.set(this._pose.j_5.x, this._pose.j_5.y, this._pose.j_5.z);
+        this.pivot4.rotation.y = this._pose.theta_0 + this._pose.theta_1 + this._pose.theta_2 + this._pose.theta_3;
         this.gripper.position.x = this.thickness;
 
-        this.pivot5.position.set(this.pose.j_6.x, this.pose.j_6.y, this.pose.j_6.z);
-        this.pivot5.rotation.y = this.pose.theta_0 + this.pose.theta_1 + this.pose.theta_2 + this.pose.theta_3;
+        this.pivot5.position.set(this._pose.j_6.x, this._pose.j_6.y, this._pose.j_6.z);
+        this.pivot5.rotation.y = this._pose.theta_0 + this._pose.theta_1 + this._pose.theta_2 + this._pose.theta_3;
         this.fixedJaw.position.x = -this.jawThickness * 0.5;
         this.fixedJaw.position.y = -this.thickness;
 
-        this.pivot6.position.set(this.pose.j_7.x, this.pose.j_7.y, this.pose.j_7.z);
-        this.pivot6.rotation.y = this.pose.theta_0 + this.pose.theta_1 + this.pose.theta_2 + this.pose.theta_3;
-        this.gripperExt.position.set(-this.dimensions.l7 / 2, 0, 0);
+        this.pivot6.position.set(this._pose.j_7.x, this._pose.j_7.y, this._pose.j_7.z);
+        this.pivot6.rotation.y = this._pose.theta_0 + this._pose.theta_1 + this._pose.theta_2 + this._pose.theta_3;
+        this.gripperExt.position.set(-this._dimensions.l7 / 2, 0, 0);
 
-        this.pivot7.position.set(this.pose.j_7.x, this.pose.j_7.y, this.pose.j_7.z);
-        this.pivot7.rotation.y = this.pose.theta_0 + this.pose.theta_1 + this.pose.theta_2 + this.pose.theta_3;
+        this.pivot7.position.set(this._pose.j_7.x, this._pose.j_7.y, this._pose.j_7.z);
+        this.pivot7.rotation.y = this._pose.theta_0 + this._pose.theta_1 + this._pose.theta_2 + this._pose.theta_3;
         this.moveableJaw.position.x = -this.jawThickness * 0.5;
         this.moveableJaw.position.y = -this.thickness;
     }

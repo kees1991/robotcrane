@@ -2,7 +2,7 @@ import {Communicator} from "../services/communicator";
 import * as THREE from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GUI} from 'three/examples/jsm/libs/lil-gui.module.min.js'
-import {RobotCrane} from "./robotcrane";
+import {Dimensions} from "./dimensions";
 
 export class RobotGui {
     renderer: THREE.WebGLRenderer;
@@ -10,17 +10,15 @@ export class RobotGui {
     camera: THREE.PerspectiveCamera;
     controls: OrbitControls;
     communicator: Communicator;
-    robot: RobotCrane;
     counter: number;
     guiInput : {states: any, position: any, org_position: any};
 
-    constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, controls: OrbitControls, communicator: Communicator, robot: RobotCrane) {
+    constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, controls: OrbitControls, communicator: Communicator) {
         this.renderer = renderer;
         this.scene = scene;
         this.camera = camera;
         this.controls = controls;
         this.communicator = communicator;
-        this.robot = robot;
         this.counter = communicator.counter;
 
         this.guiInput = {
@@ -30,7 +28,7 @@ export class RobotGui {
         }
     }
 
-    createGui = () => {
+    createGui = (dimensions: Dimensions) => {
         let gui = new GUI();
 
         // Add Reset button
@@ -38,7 +36,7 @@ export class RobotGui {
         gui.add(resetParams, 'Reset');
 
         // Add GUI folders
-        this.addMoveActuatorFolder(gui);
+        this.addMoveActuatorFolder(gui, dimensions);
         this.addMoveEndEffectorFolder(gui);
         this.addMoveOriginFolder(gui);
         this.addMoveOriginControlEndEffectorFolder(gui);
@@ -46,7 +44,6 @@ export class RobotGui {
 
     resetRobot = () => {
         this.communicator.resetRobot()
-        this.communicator.getPose()
         this.animate();
     }
 
@@ -74,6 +71,7 @@ export class RobotGui {
         let id = requestAnimationFrame( this.animate );
 
         this.controls.update();
+        console.log("robotgui counter: " + this.counter)
 
         // Cancel animation if there is an Exception from the backend
         if (this.communicator.exception !== "") {
@@ -84,8 +82,10 @@ export class RobotGui {
         }
 
         if (this.counter !== this.communicator.counter) {
-            this.robot.pose = this.communicator.pose
-            this.robot.moveToPose()
+            if (this.communicator.robot != null) {
+                this.communicator.robot.moveToPose()
+                console.log("Move to pose")
+            }
             this.counter = this.communicator.counter
         }
 
@@ -93,13 +93,13 @@ export class RobotGui {
         this.renderer.render( this.scene, this.camera );
     };
 
-    private addMoveActuatorFolder(gui: GUI) {
+    private addMoveActuatorFolder(gui: GUI, dimensions: Dimensions) {
         let actuatorsFolder = gui.addFolder('Move actuators');
-        actuatorsFolder.add(this.guiInput.states, 'd1').min(this.robot.dimensions.d4).max(this.robot.dimensions.l1)
+        actuatorsFolder.add(this.guiInput.states, 'd1').min(dimensions.d4).max(dimensions.l1)
         actuatorsFolder.add(this.guiInput.states, 'theta1').min(-360).max(360)
         actuatorsFolder.add(this.guiInput.states, 'theta2').min(-150).max(150)
         actuatorsFolder.add(this.guiInput.states, 'theta3').min(-360).max(360)
-        actuatorsFolder.add(this.guiInput.states, 'l6').min(0).max(this.robot.dimensions.l7)
+        actuatorsFolder.add(this.guiInput.states, 'l6').min(0).max(dimensions.l7)
         let actuatorParams = {
             Submit: this.moveActuators
         };
