@@ -18,7 +18,7 @@ Follow these steps to set up the application:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/kees1991/robotcrane.git
+   git clone git@github.com:kees1991/robotcrane.git
    
 2. **Move to repo directory**:
     ```bash
