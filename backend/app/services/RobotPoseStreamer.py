@@ -134,8 +134,9 @@ class RobotPoseStreamer(object):
         # Reset velocity and acceleration
         robot.reset_velocity_and_acceleration()
 
-        # Preserve the robot origin
+        # Preserve the robot origin and actuator states
         robot.origin_t_0 = robot.origin_t_1
+        robot.act_states_t_0 = robot.act_states_t_1
 
     def should_update_pose(self, current_time_ms: int) -> bool:
         """Check if enough time has passed to update the pose."""
