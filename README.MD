@@ -4,7 +4,7 @@ Author: Kees Loeff
 
 ## Overview
 
-Simulating a robot crane, see [take home assignment](https://terraformco.notion.site/Visualizing-a-Robotic-Crane-Controls-3134774001644de2afaf41e82e01654b).
+Simulating a robot crane.
 
 ## Installation
 
