@@ -1,4 +1,4 @@
-# Monumental Robot Crane
+# Robot Crane
 
 Author: Kees Loeff
 
